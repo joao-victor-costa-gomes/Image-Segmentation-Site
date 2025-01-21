@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Segmentator</title>
-    <link rel="stylesheet" href="../static/css/home.css">
+
+    <!-- Link para o arquivo CSS -->
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/home.css">
+
     <link rel="icon" href="../static/images/icon.png" type="image/png">
 </head>
 
@@ -17,7 +20,7 @@
         <div class="header-content">
             <img src="../static/images/logo.png" alt="site logo" class="header-logo">
             <h1>
-                <a href="home.html" class="home-title">SEGMENTADOR DE IMAGENS</a>
+                <a href="{{ url_for('home') }}" class="home-title">SEGMENTADOR DE IMAGENS</a>
             </h1>
         </div>
     </header>
@@ -43,8 +46,8 @@
         <div class="card-container">
 
             <!-- Card 1 -->
-            <a class="card">
-                <img src="../static/images/thresholding.png" alt="limiarizacao" class="card-image">
+            <a class="card" href="{{ url_for('threshold') }}">
+                <img src="../static/images/thresholdingB.png" alt="limiarizacao" class="card-image">
                 <div class="card-title">LIMIARIZAÇÃO</div>
             </a> 
 

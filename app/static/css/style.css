@@ -30,7 +30,7 @@ header {
 header h1 a{
     font-size: 24px;
     text-decoration: none;
-    color: #fafafa;
+    color: white;
 }
 
 .header-content {
@@ -62,4 +62,56 @@ header h1 a{
 
 .footer .footer-link:hover {
     color: #00c3ff; 
+}
+
+/* ------- EXAMPLE SECTION ------- */
+
+.example-section {
+    height: 80vh;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 10px;
+}
+
+.example-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.example-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.example-image img {
+    max-width: 300px;
+    height: auto;
+    border: 2px solid #007BFF;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.example-arrow {
+    font-size: 100px; /* Aumenta o tamanho da seta */
+    color: #007BFF;
+    font-weight: bold;
+    display: flex; /* Centraliza o conteúdo dentro do contêiner da seta */
+    align-items: center; /* Alinha verticalmente ao centro */
+    justify-content: center; /* Garante alinhamento horizontal ao centro */
+}
+
+
+/* ------- OTHERS------- */
+
+.section-title {
+    font-size: 30px; 
+    font-weight: bold;
+    margin: 35px auto 35px; 
+    color: #3f3f3f;
+    text-align: center;
 }

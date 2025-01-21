@@ -2,18 +2,11 @@
 
 .home-section {
     height: calc(100vh - 80px);
-    background-color: #fafafa; 
+    background-color: #fff; 
     display: flex;
     flex-direction: column;
     align-items: center; 
     padding: 20px;
-}
-
-.section-title {
-    font-size: 36px; 
-    font-weight: bold;
-    margin-bottom: 10px; 
-    color: #3f3f3f;
 }
 
 .home-section p {
@@ -22,6 +15,10 @@
     max-width: 750px; 
     text-align: justify;
     margin-bottom: 5px;
+}
+
+.home-section .section-title {
+    margin: 20px auto 15px;
 }
 
 .obs {
@@ -115,4 +112,3 @@
 .card:hover .card-title {
     color: white; 
 }
-

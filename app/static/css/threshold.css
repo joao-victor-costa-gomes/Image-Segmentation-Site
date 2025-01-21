@@ -1,0 +1,11 @@
+.image-send-section {
+    height: calc(100vh - 80px);
+}
+
+.section-title {
+    font-size: 30px; 
+    font-weight: bold;
+    margin: 35px auto 35px; 
+    color: #3f3f3f;
+    text-align: center;
+}
