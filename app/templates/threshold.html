@@ -5,9 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thresholding Segmentation</title>
+
+    <!-- STATIC -->
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/threshold.css">
     <link rel="icon" href="../static/images/icon.png" type="image/png">
+
 </head>
 
 <body>
@@ -25,15 +28,23 @@
     <!-- IMAGE SEND SECTION -->
     <section id="image-send-section" class="image-send-section">
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
-
-        <!-- UPLOAD AREA -->
-        <div class="upload-area">
-            <label for="image-upload" class="upload-label">
-                + ADICIONAR IMAGEM
-                <input type="file" id="image-upload" name="file" accept="file/*">
-            </label>
-        </div>
-
+    
+        <!-- Formulário de upload -->
+        <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+            <div class="upload-area">
+                <label for="image-upload" class="upload-label">
+                    + ADICIONAR IMAGEM
+                    <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg">
+                </label>
+            </div>
+            <!-- Botão de envio -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="submit-btn">Enviar Imagem</button>
+            </div>
+        </form>
+    
+        <!-- Mensagem de feedback -->
+        <div id="feedback-message" class="feedback-message"></div>
     </section>
 
     <!-- IMAGE EXAMPLE SECTION -->
@@ -61,6 +72,7 @@
         </p>
     </footer>
 
+    <script src="../static/js/threshold.js"></script>
 </body>
 
 </html>

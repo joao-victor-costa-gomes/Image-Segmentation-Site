@@ -1,6 +1,12 @@
 import os
 from flask import Flask, render_template, request, jsonify
 
+# Criando aplicação e definindo diretórios importantes
+app = Flask(__name__, 
+    template_folder='app/templates',
+    static_folder='app/static',
+)
+
 # Configurações da aplicação
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -9,13 +15,7 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 # Definindo onde arquivos de upload devem ser armazenados
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Definindo tamanho máximo permitido para uploads
-app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-
-# Criando aplicação e definindo diretórios importantes
-app = Flask(__name__, 
-    template_folder='app/templates',
-    static_folder='app/static',
-)
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH   
 
 # Função para verificar se o arquivo é permitido
 def allowed_file(filename):
@@ -34,7 +34,7 @@ def threshold():
 # Definindo rota que só aceita requisições do tipo POST para upload de arquivos
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if file not in request.files:
+    if 'file' not in request.files:
         return jsonify({'error': 'Nenhum arquivo enviado.'}), 400
 
     file = request.files['file']
