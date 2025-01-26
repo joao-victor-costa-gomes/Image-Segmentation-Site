@@ -28,21 +28,27 @@
     <section id="image-send-section" class="image-send-section">
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
 
+        {% if filename %}
+        <!-- Exibe a imagem enviada -->
+        <div class="image-container">
+            <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Imagem enviada" class="displayed-image">
+            <!-- Botão (x) para remover a imagem -->
+            <form action="{{ url_for('threshold') }}" method="GET">
+                <button type="submit" class="remove-button">✖</button>
+            </form>
+        </div>
+
+        {% else %}
         <!-- Formulário de upload -->
         <form id="upload-form" action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
             <div class="upload-area">
-                {% if filename %}
-                <!-- Exibe a imagem enviada -->
-                <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Imagem enviada" class="image-preview">
-                {% else %}
-                <!-- Área de upload padrão -->
                 <label for="image-upload" class="upload-label">
                     + ADICIONAR IMAGEM
                     <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg" onchange="document.getElementById('upload-form').submit();">
                 </label>
-                {% endif %}
             </div>
         </form>
+        {% endif %}
 
         <!-- Mensagens de feedback -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -54,7 +60,6 @@
                 </div>
             {% endif %}
         {% endwith %}
-
     </section>
 
     <!-- IMAGE EXAMPLE SECTION -->
@@ -82,7 +87,6 @@
         </p>
     </footer>
 
-    <script src="../static/js/threshold.js"></script>
 </body>
 
 </html>
