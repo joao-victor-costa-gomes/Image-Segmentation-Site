@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 # Criando aplicação e definindo diretórios importantes
@@ -32,6 +32,7 @@ def home():
 @app.route('/threshold', methods=['GET', 'POST'])
 def threshold():
     if request.method == 'POST':
+
         if 'file' not in request.files:
             flash('Nenhum arquivo enviado!', 'error')
             return redirect(request.url)
@@ -46,13 +47,18 @@ def threshold():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('Imagem enviada com sucesso!', 'success')
-            return redirect(url_for('threshold'))
+            return render_template('threshold.html', filename=filename)
 
         else:
             flash('Tipos permitidos: png, jpg, jpeg', 'error')
             return redirect(request.url)
 
     return render_template('threshold.html')       
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    print('displaying: ' + filename)
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 # Inicializador da aplicação 
 if __name__ == '__main__':
