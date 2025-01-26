@@ -46,7 +46,7 @@ def threshold():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('Imagem enviada com sucesso!', 'success')
-            return render_template('threshold.html', filename=filename)
+            return redirect(url_for('threshold'))
 
         else:
             flash('Tipos permitidos: png, jpg, jpeg', 'error')

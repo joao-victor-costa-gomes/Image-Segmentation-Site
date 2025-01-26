@@ -29,32 +29,27 @@
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
 
         <!-- Formulário de upload -->
-        <form action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
+        <form id="upload-form" action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
             <div class="upload-area">
                 <label for="image-upload" class="upload-label">
                     + ADICIONAR IMAGEM
-                    <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg">
+                    <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg" onchange="document.getElementById('upload-form').submit();">
                 </label>
             </div>
-
-            <!-- Mensagens de feedback -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div id="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="flash-message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <!-- Botão de envio -->
-            <div style="text-align: center; margin-top: 20px;">
-                <button type="submit" class="submit-btn">Enviar Imagem</button>
-            </div>
         </form>
-    </section>
 
+        <!-- Mensagens de feedback -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+    </section>
 
     <!-- IMAGE EXAMPLE SECTION -->
     <section id="example-section" class="example-section">
