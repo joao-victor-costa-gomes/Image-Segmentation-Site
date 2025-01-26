@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, flash, url_for
+from werkzeug.utils import secure_filename
 
 # Criando aplicação e definindo diretórios importantes
 app = Flask(__name__, 
@@ -16,6 +17,7 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Definindo tamanho máximo permitido para uploads
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH   
+app.secret_key = 'secret_key'
 
 # Função para verificar se o arquivo é permitido
 def allowed_file(filename):
@@ -27,30 +29,33 @@ def home():
     return render_template('home.html')
 
 # ----- Página de segmentação por limiarização -----
-@app.route('/threshold')
+@app.route('/threshold', methods=['GET', 'POST'])
 def threshold():
-    return render_template('threshold.html') 
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('Nenhum arquivo enviado!', 'error')
+            return redirect(request.url)
 
-# Definindo rota que só aceita requisições do tipo POST para upload de arquivos
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'Nenhum arquivo enviado.'}), 400
+        file = request.files['file']
 
-    file = request.files['file']
+        if file.filename == '':
+            flash('Nenhuma imagem selecionada para upload!', 'error')
+            return redirect(request.url)
 
-    if file.filename == '':
-        return jsonify({'error': 'Nenhum arquivo selecionado.'}), 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            flash('Imagem enviada com sucesso!', 'success')
+            return render_template('threshold.html', filename=filename)
 
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'Tipo de arquivo não suportado. Apenas PNG e JPG são permitidos.'}), 400
+        else:
+            flash('Tipos permitidos: png, jpg, jpeg', 'error')
+            return redirect(request.url)
 
-    # Salvar o arquivo na pasta "uploads"
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # Cria a pasta, se não existir
-    file.save(filepath)
-    return jsonify({'success': 'Upload realizado com sucesso!', 'filepath': filepath}), 200   
+    return render_template('threshold.html')       
 
 # Inicializador da aplicação 
 if __name__ == '__main__':
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True)

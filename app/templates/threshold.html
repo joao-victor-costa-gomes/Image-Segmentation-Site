@@ -14,7 +14,6 @@
 </head>
 
 <body>
-
     <!-- HEADER -->
     <header>
         <div class="header-content">
@@ -28,24 +27,34 @@
     <!-- IMAGE SEND SECTION -->
     <section id="image-send-section" class="image-send-section">
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
-    
+
         <!-- Formulário de upload -->
-        <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
             <div class="upload-area">
                 <label for="image-upload" class="upload-label">
                     + ADICIONAR IMAGEM
                     <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg">
                 </label>
             </div>
+
+            <!-- Mensagens de feedback -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div id="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             <!-- Botão de envio -->
             <div style="text-align: center; margin-top: 20px;">
                 <button type="submit" class="submit-btn">Enviar Imagem</button>
             </div>
         </form>
-    
-        <!-- Mensagem de feedback -->
-        <div id="feedback-message" class="feedback-message"></div>
     </section>
+
 
     <!-- IMAGE EXAMPLE SECTION -->
     <section id="example-section" class="example-section">

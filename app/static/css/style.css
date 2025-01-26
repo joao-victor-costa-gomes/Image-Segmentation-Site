@@ -97,14 +97,13 @@ header h1 a{
 }
 
 .example-arrow {
-    font-size: 100px; /* Aumenta o tamanho da seta */
+    font-size: 100px; 
     color: #007BFF;
     font-weight: bold;
-    display: flex; /* Centraliza o conteúdo dentro do contêiner da seta */
-    align-items: center; /* Alinha verticalmente ao centro */
-    justify-content: center; /* Garante alinhamento horizontal ao centro */
+    display: flex;
+    align-items: center; 
+    justify-content: center;
 }
-
 
 /* ------- OTHERS------- */
 
@@ -114,4 +113,25 @@ header h1 a{
     margin: 35px auto 35px; 
     color: #3f3f3f;
     text-align: center;
+}
+
+/* ------- FLASK FLASH MESSAGES ------- */
+
+.flash-message {
+    padding: 10px;
+    margin: 10px auto;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
