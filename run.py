@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
@@ -9,19 +10,17 @@ app = Flask(__name__,
 )
 
 # Configurações da aplicação
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-MAX_CONTENT_LENGTH = 16 * 1024 * 1024 
+class Config:
+    UPLOAD_FOLDER = 'uploads'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024 
+    SECRET_KEY = 'secret_key'
 
-# Definindo onde arquivos de upload devem ser armazenados
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# Definindo tamanho máximo permitido para uploads
-app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH   
-app.secret_key = 'secret_key'
+app.config.from_object(Config)
 
 # Função para verificar se o arquivo é permitido
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 # ----- Página principal -----
 @app.route('/')
@@ -44,7 +43,9 @@ def threshold():
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f') # Timestamp com data, hora e milissegundos
+            file_extension = os.path.splitext(file.filename)[1]  # Extrai a extensão original
+            filename = f"{timestamp}{file_extension}"  # Combina o timestamp com a extensão
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('Imagem enviada com sucesso!', 'success')
             return render_template('threshold.html', filename=filename)
@@ -55,13 +56,20 @@ def threshold():
 
     return render_template('threshold.html')       
 
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    flash('O arquivo enviado excede o limite permitido de 16 MB!', 'error')
+    return redirect(request.url)
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     print('displaying: ' + filename)
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(Config.UPLOAD_FOLDER, filename)
+
+
 
 # Inicializador da aplicação 
 if __name__ == '__main__':
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+    if not os.path.exists(Config.UPLOAD_FOLDER):
+        os.makedirs(Config.UPLOAD_FOLDER)
     app.run(debug=True)
