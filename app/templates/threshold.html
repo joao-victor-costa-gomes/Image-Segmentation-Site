@@ -27,40 +27,50 @@
     <!-- IMAGE SEND SECTION -->
     <section id="image-send-section" class="image-send-section">
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
+    
+        <!-- Divisão em duas colunas -->
+        <div class="segment-container">
 
-        {% if filename %}
-        <!-- Exibe a imagem enviada -->
-        <div class="image-container">
-            <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Imagem enviada" class="displayed-image">
-            <!-- Botão (x) para remover a imagem -->
-            <form action="{{ url_for('threshold') }}" method="GET">
-                <button type="submit" class="remove-button">✖</button>
-            </form>
-        </div>
-
-        {% else %}
-        <!-- Formulário de upload -->
-        <form id="upload-form" action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
-            <div class="upload-area">
-                <label for="image-upload" class="upload-label">
-                    + ADICIONAR IMAGEM
-                    <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg" onchange="document.getElementById('upload-form').submit();">
-                </label>
-            </div>
-        </form>
-        {% endif %}
-
-        <!-- Mensagens de feedback -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div id="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                    {% endfor %}
+            <!-- Lado esquerdo: Exibição da imagem -->
+            <div class="segment-left">
+                {% if filename %}
+                <!-- Exibe a imagem enviada -->
+                <div class="image-container">
+                    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Imagem enviada" class="displayed-image">
+                    <!-- Botão (x) para remover a imagem -->
+                    <form action="{{ url_for('threshold') }}" method="GET">
+                        <button type="submit" class="remove-button">✖</button>
+                    </form>
                 </div>
-            {% endif %}
-        {% endwith %}
+                {% else %}
+                <!-- Formulário de upload -->
+                <form id="upload-form" action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
+                    <div class="upload-area">
+                        <label for="image-upload" class="upload-label">
+                            + ADICIONAR IMAGEM
+                            <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg" onchange="document.getElementById('upload-form').submit();">
+                        </label>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+    
+            <!-- Lado direito: Configuração -->
+            <div class="segment-right">
+                <h3>Configuração</h3>
+                <form id="config-form">
+                    <div class="config-option">
+                        <label for="threshold-value">Valor do Threshold:</label>
+                        <input type="number" id="threshold-value" name="threshold-value" min="0" max="255" value="55">
+                    </div>
+                    <div class="submit-btn">
+                        <button type="submit" class="apply-btn">ENVIAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </section>
+    
 
     <!-- IMAGE EXAMPLE SECTION -->
     <section id="example-section" class="example-section">
