@@ -32,6 +32,7 @@ def home():
 def threshold():
     if request.method == 'POST':
 
+        # Para a imagem enviada
         if 'file' not in request.files:
             flash('Nenhum arquivo enviado!', 'error')
             return redirect(request.url)
@@ -47,7 +48,12 @@ def threshold():
             file_extension = os.path.splitext(file.filename)[1]  # Extrai a extensão original
             filename = f"{timestamp}{file_extension}"  # Combina o timestamp com a extensão
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            flash('Imagem enviada com sucesso!', 'success')
+            
+            # Para valor de threshold enviado
+            threshold_value = request.form.get('threshold-value', None)
+            print(f"Imagem '{filename}' enviada com sucesso!")
+            print(f"Valor do Threshold recebido: {threshold_value}")
+
             return render_template('threshold.html', filename=filename)
 
         else:
@@ -63,9 +69,8 @@ def request_entity_too_large(error):
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    print('displaying: ' + filename)
+    # print('displaying: ' + filename)
     return send_from_directory(Config.UPLOAD_FOLDER, filename)
-
 
 
 # Inicializador da aplicação 

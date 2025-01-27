@@ -115,22 +115,22 @@
     margin: 20px;
 }
 
-/* Lado esquerdo: Imagem */
+/* LEFT SEGMENT */
 .segment-left {
     flex: 1;
     min-width: 400px;
-    max-width: 60%; /* Aproximadamente metade da tela */
+    max-width: 60%; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-/* Lado direito: Configurações */
+/* RIGHT SEGMENT */
 .segment-right {
     flex: 1;
     min-width: 300px;
-    max-width: 35%; /* Aproximadamente metade da tela */
+    max-width: 35%; 
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -140,7 +140,7 @@
     gap: 15px;
 }
 
-/* Configuração de botões e inputs */
+/* SEGMENT BUTTONS AND INPUTS */
 .config-option {
     margin-bottom: 15px;
 }
@@ -178,3 +178,54 @@
 .apply-btn:hover {
     background-color: #0056b3;
 }
+
+/* SEGMENTED IMAGES SECTION */
+.segmentation-result-section {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f4f7fc;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+/* Container para as linhas */
+.result-container {
+    display: flex;
+    flex-direction: column; /* As linhas ficam uma abaixo da outra */
+    gap: 20px; /* Espaço entre as linhas */
+    align-items: center;
+}
+
+/* Cada linha de imagens */
+.result-row {
+    display: flex;
+    justify-content: space-evenly; /* Espaçamento uniforme entre as imagens */
+    gap: 20px; /* Espaço entre as colunas */
+    width: 100%; /* Cada linha ocupa toda a largura */
+}
+
+/* Cada imagem segmentada */
+.result-segmented {
+    flex: 1 1 40%; /* Cada imagem ocupa 40% da largura disponível */
+    max-width: 40%; /* Limite máximo de 40% da largura da tela */
+    text-align: center; /* Centraliza o título e a imagem */
+}
+
+/* Títulos das imagens */
+.image-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #3f3f3f;
+}
+
+/* Estilo das imagens */
+.result-segmented img {
+    width: 100%; /* A imagem ocupa toda a largura do bloco */
+    height: auto; /* Mantém as proporções */
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+

@@ -27,7 +27,7 @@
     <!-- IMAGE SEND SECTION -->
     <section id="image-send-section" class="image-send-section">
         <h2 class="section-title">SEGMENTAÇÃO POR LIMIARIZAÇÃO</h2>
-    
+
         <!-- Divisão em duas colunas -->
         <div class="segment-container">
 
@@ -43,34 +43,51 @@
                     </form>
                 </div>
                 {% else %}
-                <!-- Formulário de upload -->
+                <!-- Formulário de upload e threshold -->
                 <form id="upload-form" action="{{ url_for('threshold') }}" method="POST" enctype="multipart/form-data">
                     <div class="upload-area">
                         <label for="image-upload" class="upload-label">
                             + ADICIONAR IMAGEM
-                            <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg" onchange="document.getElementById('upload-form').submit();">
+                            <input type="file" id="image-upload" name="file" accept=".png,.jpg,.jpeg">
                         </label>
                     </div>
-                </form>
-                {% endif %}
-            </div>
-    
-            <!-- Lado direito: Configuração -->
-            <div class="segment-right">
-                <h3>Configuração</h3>
-                <form id="config-form">
+
+                    <!-- Configuração do Threshold -->
                     <div class="config-option">
                         <label for="threshold-value">Valor do Threshold:</label>
                         <input type="number" id="threshold-value" name="threshold-value" min="0" max="255" value="55">
                     </div>
+
+                    <!-- Botão para enviar -->
                     <div class="submit-btn">
-                        <button type="submit" class="apply-btn">ENVIAR</button>
+                        <button type="submit" class="apply-btn">Enviar e Segmentar</button>
                     </div>
                 </form>
+                {% endif %}
             </div>
+
+            <!-- Lado direito: Mensagens ou configurações adicionais -->
+            <div class="segment-right">
+                <h3>Configuração</h3>
+                <p>Ajuste o valor do threshold antes de segmentar sua imagem.</p>
+            </div>
+
         </div>
     </section>
-    
+
+    <!-- SEGMENTATION RESULT SECTION -->
+    <section id="segmentation-result-section" class="segmentation-result-section">
+        <h2 class="section-title">Resultados da Segmentação</h2>
+
+        <div class="result-container">
+
+            <div class="result-segmented">
+                <h3 class="image-title">Imagem Segmentada 1</h3>
+                <img src="../static/images/placeholder.png" alt="Imagem segmentada">
+            </div>
+
+        </div>
+    </section>
 
     <!-- IMAGE EXAMPLE SECTION -->
     <section id="example-section" class="example-section">
