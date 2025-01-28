@@ -75,7 +75,24 @@
         </div>
     </section>
 
-    <!-- SEGMENTATION RESULT SECTION -->
+    
+    <section id="segmentation-result-section" class="segmentation-result-section" style="display: {% if processed_file %}block{% else %}none{% endif %};">
+        <h2 class="section-title">Resultados da Segmentação</h2>
+
+        <div class="result-container">
+
+            <div class="result-segmented">
+                <h3 class="image-title">Imagem Segmentada</h3>
+                {% if processed_file %}
+                <img src="{{ processed_file }}" alt="Imagem segmentada" class="processed-image">
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+    
+
+    <!-- SEGMENTATION RESULT SECTION 
     <section id="segmentation-result-section" class="segmentation-result-section">
         <h2 class="section-title">Resultados da Segmentação</h2>
 
@@ -88,6 +105,7 @@
 
         </div>
     </section>
+    -->
 
     <!-- IMAGE EXAMPLE SECTION -->
     <section id="example-section" class="example-section">
