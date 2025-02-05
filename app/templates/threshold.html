@@ -7,5 +7,20 @@
 </head>
 <body>
     <h1>PÁGINA THRESHOLD</h1>
+
+    <form action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/png, image/jpeg">
+        <button type="submit">Enviar Imagem</button>
+    </form>
+
+    <br>
+
+    {% if filename %}
+    <img src="{{ url_for('main.uploaded_file', filename=filename) }}" alt="Imagem Enviada" width="300">
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('main.home_page') }}">Ir para Home</a>
 </body>
 </html>

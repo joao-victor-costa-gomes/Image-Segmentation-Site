@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 
 # Carregando nossas variáveis da aplicação
@@ -9,6 +10,9 @@ def create_app():
 
     # Carregando nossas variáveis da aplicação
     app.config.from_object(Config)
+
+    # Criar a pasta uploads/ se não existir
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # Registrando a Blueprint de rotas nessa aplicação
     from app.routes import main
