@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app, send_from_directory
-from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
+from flask import Blueprint, render_template, request, redirect, url_for, current_app, send_from_directory  
 
 # Criando um Blueprint para as rotas da aplicação 
 main = Blueprint('main', __name__)
@@ -22,8 +23,10 @@ def threshold_page():
     if file.filename == '':
         return render_template('threshold.html', filename=None)
 
-    # Garante um nome de arquivo seguro
-    filename = secure_filename(file.filename)
+    # Segurança do arquivo enviada
+    file_extension = os.path.splitext(secure_filename(file.filename))[1]
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filename = f"image_{timestamp}{file_extension}"
 
     upload_folder = current_app.config['UPLOAD_FOLDER']
     os.makedirs(upload_folder, exist_ok=True)  # Garante que a pasta exista
