@@ -33,9 +33,11 @@
 
     <br>
 
-    {% if segmented_filename %}
-    <h3>Imagem Segmentada</h3>
-    <img src="{{ url_for('main.processed_file', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
+    {% if segmented_filenames %}
+        <h3>Imagens Segmentadas</h3>
+            {% for segmented_filename in segmented_filenames %}
+                <img src="{{ url_for('main.processed_file', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
+            {% endfor %}
     {% endif %}
 
     <br>

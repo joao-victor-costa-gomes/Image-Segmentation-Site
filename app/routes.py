@@ -4,7 +4,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, redirect, url_for, current_app, send_from_directory  
 
-from .segmentation.thresholding import apply_threshold
+from .segmentation.thresholding import apply_threshold, apply_multiple_thresholds
 
 # Criando um Blueprint para as rotas da aplicação 
 main = Blueprint('main', __name__)
@@ -16,7 +16,7 @@ def home_page():
 @main.route('/threshold', methods=['GET', 'POST'])
 def threshold_page():
     filename = None
-    segmented_filename = None
+    segmented_filenames = None
 
     if request.method == 'POST':
         if 'image' in request.files:
@@ -43,16 +43,14 @@ def threshold_page():
                 upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
                 # Aplica o thresholding na imagem
-                segmented_filename = apply_threshold(upload_path, threshold_value)
+                segmented_filenames = apply_multiple_thresholds(upload_path, threshold_value)
 
-                if segmented_filename:
+                if segmented_filenames:
                     processed_folder = current_app.config['PROCESSED_FOLDER']
                     os.makedirs(processed_folder, exist_ok=True)  # Garante que a pasta exista
-                    processed_path = os.path.join(processed_folder, segmented_filename)
-
 
     # Retorna a página juntamente com a imagem enviada e a processada
-    return render_template('threshold.html', filename=filename, segmented_filename=segmented_filename)
+    return render_template('threshold.html', filename=filename, segmented_filenames=segmented_filenames)
 
 # Rota para servir os arquivos da pasta uploads/
 @main.route('/uploads/<filename>')
