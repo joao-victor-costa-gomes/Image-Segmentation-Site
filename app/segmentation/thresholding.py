@@ -1,16 +1,9 @@
-import cv2
 import os
+import cv2
 import numpy as np
 from flask import current_app
 
 def apply_threshold(image_path, threshold_value):
-    """
-    Aplica um thresholding binário em uma imagem e salva o resultado.
-    
-    :param image_path: Caminho da imagem original.
-    :param threshold_value: Valor do threshold (0-255).
-    :return: Lista com os nomes dos arquivos segmentados salvos.
-    """
     # Lê a imagem em escala de cinza
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     
@@ -34,13 +27,6 @@ def apply_threshold(image_path, threshold_value):
 
 
 def apply_multiple_thresholds(image_path, threshold_value):
-    """
-    Aplica diferentes tipos de thresholding em uma imagem e salva os resultados.
-
-    :param image_path: Caminho da imagem original.
-    :param threshold_value: Valor do threshold (0-255).
-    :return: Lista com os nomes dos arquivos segmentados salvos.
-    """
     # Lê a imagem em escala de cinza
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 

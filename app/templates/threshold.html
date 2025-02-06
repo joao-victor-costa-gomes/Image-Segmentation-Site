@@ -18,7 +18,7 @@
 
     {% if filename %}
     <h3>Imagem enviada</h3>
-    <img src="{{ url_for('main.uploaded_file', filename=filename) }}" alt="Imagem Enviada" width="300">
+    <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="300">
 
     <br>
     <!-- Segundo formulário: Enviar o valor do threshold -->
@@ -36,7 +36,7 @@
     {% if segmented_filenames %}
         <h3>Imagens Segmentadas</h3>
             {% for segmented_filename in segmented_filenames %}
-                <img src="{{ url_for('main.processed_file', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
+                <img src="{{ url_for('main.processed_file_path', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
             {% endfor %}
     {% endif %}
 
