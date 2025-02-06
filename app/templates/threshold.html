@@ -16,11 +16,13 @@
 
     <br>
 
+    <!-- Mostra imagem enviada -->
     {% if filename %}
     <h3>Imagem enviada</h3>
     <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="300">
 
     <br>
+
     <!-- Segundo formulário: Enviar o valor do threshold -->
      <h3>Parâmetros de segmentação</h3>
     <form action="" method="POST">
@@ -33,11 +35,13 @@
 
     <br>
 
+    <!-- Mostra imagem(s) segmentada(s) -->
     {% if segmented_filenames %}
         <h3>Imagens Segmentadas</h3>
-            {% for segmented_filename in segmented_filenames %}
-                <img src="{{ url_for('main.processed_file_path', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
-            {% endfor %}
+        {% for segmented in segmented_filenames %}
+            <p>Tipo de segmentação: <strong>{{ segmented.method }}</strong></p>
+            <img src="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" alt="Imagem Segmentada" width="300">
+        {% endfor %}
     {% endif %}
 
     <br>
