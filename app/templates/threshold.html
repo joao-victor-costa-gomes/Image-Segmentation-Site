@@ -8,6 +8,7 @@
 <body>
     <h1>PÁGINA THRESHOLD</h1>
 
+    <!-- Primeiro formulário: Upload da imagem -->
     <form action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/png, image/jpeg">
         <button type="submit">Enviar Imagem</button>
@@ -16,11 +17,29 @@
     <br>
 
     {% if filename %}
+    <h3>Imagem enviada</h3>
     <img src="{{ url_for('main.uploaded_file', filename=filename) }}" alt="Imagem Enviada" width="300">
+
+    <br>
+    <!-- Segundo formulário: Enviar o valor do threshold -->
+     <h3>Parâmetros de segmentação</h3>
+    <form action="" method="POST">
+        <input type="hidden" name="filename" value="{{ filename }}">
+        <label for="threshold_value">Valor do Threshold:</label>
+        <input type="number" name="threshold_value" min="0" max="255" value="150">
+        <button type="submit" name="apply_threshold">Aplicar Threshold</button>
+    </form>
     {% endif %}
 
     <br>
 
+    {% if segmented_filename %}
+    <h3>Imagem Segmentada</h3>
+    <img src="{{ url_for('main.processed_file', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
+    {% endif %}
+
+    <br>
+    
     <a href="{{ url_for('main.home_page') }}">Ir para Home</a>
 </body>
 </html>
