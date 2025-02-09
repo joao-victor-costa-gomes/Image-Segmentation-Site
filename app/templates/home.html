@@ -1,24 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Segmentador de Imagens</title>
-    <link rel="icon" href="../static/images/icon.png" type="image/png">
-    <link rel="stylesheet" href="../static/css/home.css">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <!-- HEADER -->
-    <header>
-        <div class="header-content">
-            <img src="../static/images/logo.png" alt="header logo" class="header-logo">
-            <h1>
-                <a href="{{ url_for('main.home_page') }}" class="header-title">SEGMENTADOR DE IMAGENS</a>
-            </h1>
-        </div>
-    </header>
+{% block title %} Segmentador de Imagens {% endblock %}
 
+{% block content %}
     <!-- SERVICES -->
     <section id="services-section" class="services-section">
         <h2 class="section-title">Selecione o método de segmentação</h2>
@@ -73,17 +57,4 @@
             </a> 
         </div>
     </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p>Projeto de Iniciação Científica PIBIC</p>
-        <p>
-            Desenvolvido por <a href="https://github.com/joao-victor-costa-gomes/" class="footer-link" target="_blank">João Victor da Costa Gomes</a>
-        </p>
-        <p>
-            Confira o <a href="https://github.com/joao-victor-costa-gomes/Image-Segmentation-Site" class="footer-link" target="_blank">repositório</a> original do projeto
-        </p>
-    </footer>
-
-</body>
-</html>
+{% endblock %}
