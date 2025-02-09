@@ -4,9 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Segmentador de Imagens</title>
+    <link rel="icon" href="../static/images/icon.png" type="image/png">
+    <link rel="stylesheet" href="../static/css/home.css">
 </head>
 <body>
-    <h1>PÁGINA HOME</h1>
-    <a href="{{ url_for('main.threshold_page') }}">Ir para Threshold</a>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <img src="../static/images/logo.png" alt="header logo" class="header-logo">
+            <h1>
+                <a href="{{ url_for('main.home_page') }}" class="header-title">SEGMENTADOR DE IMAGENS</a>
+            </h1>
+        </div>
+    </header>
+
+    <!-- SERVICES -->
+    <section id="services-section" class="services-section">
+        <h2 class="section-title">Selecione o método de segmentação</h2>
+
+        <div class="card-container">
+            <!-- Card 1 -->
+            <a class="card" href="{{ url_for('main.threshold_page') }}">
+                <img src="../static/images/thresholdingB.png" alt="limiarizacao" class="card-image">
+                <div class="card-title">LIMIARIZAÇÃO</div>
+            </a> 
+
+            <!-- Card 2 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="baseada em bordas" class="card-image">
+                <div class="card-title">BASEADA EM BORDAS</div>
+            </a> 
+
+            <!-- Card 3 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="baseada em região" class="card-image">
+                <div class="card-title">BASEADA EM REGIÃO</div>
+            </a> 
+
+            <!-- Card 4 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="baseada em clustering"class="card-image">
+                <div class="card-title">BASEADA EM CLUSTERING</div>
+            </a> 
+
+            <!-- Card 5 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="watershed" class="card-image">
+                <div class="card-title">WATERSHED</div>
+            </a> 
+
+            <!-- Card 6 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="baseada em cores" class="card-image">
+                <div class="card-title">BASEADA EM CORES</div>
+            </a> 
+
+            <!-- Card 7 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="mask r-cnn" class="card-image">
+                <div class="card-title">SEGMENTAÇÃO COM MASK-RCNN</div>
+            </a> 
+
+            <!-- Card 8 -->
+            <a class="card">
+                <img src="../static/images/placeholder.png" alt="panóptica" class="card-image">
+                <div class="card-title">SEGMENTAÇÃO PANÓPTICA</div>
+            </a> 
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Projeto de Iniciação Científica PIBIC</p>
+        <p>
+            Desenvolvido por <a href="https://github.com/joao-victor-costa-gomes/" class="footer-link" target="_blank">João Victor da Costa Gomes</a>
+        </p>
+        <p>
+            Confira o <a href="https://github.com/joao-victor-costa-gomes/Image-Segmentation-Site" class="footer-link" target="_blank">repositório</a> original do projeto
+        </p>
+    </footer>
+
 </body>
 </html>
