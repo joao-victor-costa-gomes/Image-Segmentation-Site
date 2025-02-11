@@ -14,10 +14,16 @@ header {
     color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     position: relative; 
+}
+
+/* Torna a div inteira clicável */
+.header-link {
+    text-decoration: none; /* Remove sublinhado do link */
+    color: inherit; /* Mantém a cor original do texto */
+    display: flex; /* Garante que o link não quebre o layout */
 }
 
 .header-title {
@@ -30,11 +36,17 @@ header {
     display: flex;
     align-items: center;
     gap: 10px; 
+    cursor: pointer; /* Indica que é clicável */
 }
 
 .header-logo {
     width: 40px; 
     height: auto; 
+}
+
+/* Efeito de hover */
+.header-link:hover .header-title {
+    text-decoration: underline; /* Efeito ao passar o mouse */
 }
 
 /* ------- FOOTER ------- */

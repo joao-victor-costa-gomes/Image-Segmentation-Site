@@ -3,8 +3,13 @@
 {% block title %} Segmentação por Limiarização {% endblock %}
 
 {% block content %}
-    <section>
-        <h1>PÁGINA THRESHOLD</h1>
+    <section class="segmentation_page_section">
+
+        <div class="page_title">Segmentação por Limiarização</div>
+
+        <div>
+            
+        </div>
 
         <!-- Primeiro formulário: Upload da imagem -->
         <form action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
@@ -39,8 +44,6 @@
         {% endif %}
 
         <br>
-
-        <a href="{{ url_for('main.home_page') }}">Ir para Home</a>
 
     </section>
 {% endblock %}
