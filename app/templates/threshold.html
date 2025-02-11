@@ -12,8 +12,12 @@
         <h2 class="page_title">Segmentação por Limiarização</h2>
 
         <!-- Primeiro formulário: Upload da imagem -->
-        <form action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
-            <input type="file" name="image" accept="image/png, image/jpeg">
+        <form id="upload-form" action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data" >
+            <label id="drop-area" class="upload-box">
+                <input type="file" id="file-input" name="image" accept="image/png, image/jpeg" hidden>
+                <img src="{{ url_for('static', filename='images/upload_icon.png') }}" alt="Upload Icon" class="upload-icon">
+                <p>Arraste e solte a imagem aqui ou clique para selecionar</p>
+            </label>
             <button type="submit">Enviar Imagem</button>
         </form>
 
@@ -46,4 +50,6 @@
         <br>
 
     </section>
+
+    <!-- <script src="{{ url_for('static', filename='js/threshold.js') }}"></script> -->
 {% endblock %}
