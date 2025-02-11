@@ -2,14 +2,14 @@
 
 {% block title %} Segmentação por Limiarização {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/threshold.css') }}">
+{% endblock %}
+
 {% block content %}
     <section class="segmentation_page_section">
 
-        <div class="page_title">Segmentação por Limiarização</div>
-
-        <div>
-            
-        </div>
+        <h2 class="page_title">Segmentação por Limiarização</h2>
 
         <!-- Primeiro formulário: Upload da imagem -->
         <form action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
