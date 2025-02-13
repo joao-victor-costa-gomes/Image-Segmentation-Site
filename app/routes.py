@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, current_app, send_from_directory
+from flask import Blueprint, render_template, request, current_app, send_from_directory, redirect, url_for
 from app.services import save_uploaded_image, apply_segmentation, ensure_folder_exists
 
 # Criando um Blueprint contendo todas essas rotas abaixo

@@ -22,7 +22,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 200px); 
+    height: calc(100vh - 250px); 
 }
 
 .upload-box {
@@ -85,11 +85,28 @@ button:hover {
     transition: 0.3s ease;
 }
 
+.remove-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #dc3545;
+    background-color: #fff;
+    border-radius: 50%; 
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    line-height: 1; /* Garante que o ícone não fique desalinhado */
+    padding: 0;
+    text-align: center;
+}
 
-
-
-
-
+.remove-btn:hover {
+    background-color: #dc3545; 
+    color: #fff; 
+}
 
 
 

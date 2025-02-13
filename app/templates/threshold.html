@@ -11,31 +11,38 @@
 
         <h2 class="page_title">Segmentação por Limiarização</h2>
 
-        <!-- Primeiro formulário: Upload da imagem -->
-        <form id="upload-form" action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data" >
-            <label id="drop-area" class="upload-box">
-                <input type="file" id="file-input" name="image" accept="image/png, image/jpeg" hidden>
-                <img src="{{ url_for('static', filename='images/upload_icon.png') }}" alt="Upload Icon" class="upload-icon">
-                <p>Arraste e solte a imagem aqui ou clique para selecionar</p>
-            </label>
-            <button type="submit">Enviar Imagem</button>
-        </form>
-
-        <br>
-
+        <!-- Se nenhuma imagem for enviada, carregar primeiro formulário, se não, carregar o segundo -->
         {% if filename %}
+
         <h3>Imagem enviada</h3>
         <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="300">
+
+        <!-- Botão para "remover" (resetar o estado da página) -->
+        <form action="{{ url_for('main.threshold_page') }}" method="GET" style="margin-top: 10px;">
+            <button type="submit" class="remove-btn">❌</button>
+        </form>
 
         <br>
         <!-- Segundo formulário: Enviar o valor do threshold -->
         <h3>Parâmetros de segmentação</h3>
-        <form action="" method="POST">
+        <form action="" method="POST" id='apply_area'>
             <input type="hidden" name="filename" value="{{ filename }}">
             <label for="threshold_value">Valor do Threshold:</label>
             <input type="number" name="threshold_value" min="0" max="255" value="150">
             <button type="submit" name="apply_threshold">Aplicar Threshold</button>
         </form>
+
+        {% else %}
+
+        <!-- Primeiro formulário: Upload da imagem -->
+        <form id="upload-form" action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
+            <label id="drop-area" class="upload-box">
+                <input type="file" id="file-input" name="image" accept="image/png, image/jpeg" hidden>
+                <img src="{{ url_for('static', filename='images/upload_icon.png') }}" alt="Upload Icon" class="upload-icon">
+                <p>Arraste e solte a imagem aqui ou clique para selecionar</p>
+            </label>
+        </form>
+
         {% endif %}
 
         <br>

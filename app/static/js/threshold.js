@@ -35,3 +35,5 @@ fileInput.addEventListener('change', () => {
         uploadForm.submit();
     }
 });
+
+
