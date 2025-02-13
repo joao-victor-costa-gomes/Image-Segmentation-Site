@@ -17,13 +17,12 @@
     color: #3f3f3f;
 }
 
-/* Centraliza apenas o formulário de upload */
 #upload-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 200px); /* Ajuste para não ocupar todo o espaço */
+    height: calc(100vh - 200px); 
 }
 
 .upload-box {
@@ -79,8 +78,12 @@ button:hover {
     background-color: #0056b3;
 }
 
-
-
+/* Quando o usuário arrasta um arquivo sobre a área */
+.upload-box.dragover {
+    background-color: #e0f0ff;
+    border-color: #0056b3;
+    transition: 0.3s ease;
+}
 
 
 

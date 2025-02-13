@@ -1,29 +1,28 @@
-const dropArea = document.getElementById("drop-area");
-const fileInput = document.getElementById("file-input");
+const dropArea = document.getElementById('drop-area');
+const fileInput = document.getElementById('file-input');
 
-// Quando o usuário arrasta um arquivo para dentro
-dropArea.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    dropArea.classList.add("dragover");
+// Evita o comportamento padrão para eventos de arrastar e soltar
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+    dropArea.addEventListener(event, e => e.preventDefault());
 });
 
-// Quando o usuário sai da área de drop
-dropArea.addEventListener("dragleave", () => {
-    dropArea.classList.remove("dragover");
+// Adiciona classe quando a imagem é arrastada sobre a área
+dropArea.addEventListener('dragover', () => {
+    dropArea.classList.add('dragover');
 });
 
-// Quando o usuário solta o arquivo
-dropArea.addEventListener("drop", (e) => {
-    e.preventDefault();
-    dropArea.classList.remove("dragover");
+// Remove a classe quando a imagem sai da área
+dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('dragover');
+});
 
+// Quando o arquivo é solto na área
+dropArea.addEventListener('drop', (e) => {
+    dropArea.classList.remove('dragover');
+
+    // Obtém o arquivo solto
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         fileInput.files = files;
     }
-});
-
-// Agora toda a área é clicável
-dropArea.addEventListener("click", () => {
-    fileInput.click();
 });
