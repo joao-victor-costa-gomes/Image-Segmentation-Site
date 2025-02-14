@@ -14,23 +14,52 @@
         <!-- Se nenhuma imagem for enviada, carregar primeiro formulário, se não, carregar o segundo -->
         {% if filename %}
 
-        <h3>Imagem enviada</h3>
-        <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="300">
+        <!-- Container principal das duas seções -->
+        <div class="segmentation-container">
 
-        <!-- Botão para "remover" (resetar o estado da página) -->
-        <form action="{{ url_for('main.threshold_page') }}" method="GET" style="margin-top: 10px;">
-            <button type="submit" class="remove-btn">❌</button>
-        </form>
+            <div class="left-section">
+                <h3 class="page_subtitle">Imagem enviada</h3>
+                <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="400">
 
-        <br>
-        <!-- Segundo formulário: Enviar o valor do threshold -->
-        <h3>Parâmetros de segmentação</h3>
-        <form action="" method="POST" id='apply_area'>
-            <input type="hidden" name="filename" value="{{ filename }}">
-            <label for="threshold_value">Valor do Threshold:</label>
-            <input type="number" name="threshold_value" min="0" max="255" value="150">
-            <button type="submit" name="apply_threshold">Aplicar Threshold</button>
-        </form>
+                <!-- Botão para "remover" (resetar o estado da página) -->
+                <div class="remove-button-container">
+                    <form action="{{ url_for('main.threshold_page') }}" method="GET" style="margin-top: 10px;">
+                        <button type="submit" class="remove-btn">❌</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-section">
+                <!-- Segundo formulário: Enviar o valor do threshold -->
+                <h3 class="page_subtitle">Parâmetros de segmentação</h3>
+                <form action="" method="POST" id='apply_area'>
+                    <input type="hidden" name="filename" value="{{ filename }}">
+
+                    <!-- Primeiro input -->
+                    <div class="input-group">
+                        <label for="threshold_value">Valor do Threshold:</label>
+                        <input type="number" name="threshold_value" min="0" max="255" value="150">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="">Valor de Placeholder:</label>
+                        <input type="number" name="valor de placeholder" min="0" max="255" value="placeholder">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="">Valor de Placeholder:</label>
+                        <input type="number" name="valor de placeholder" min="0" max="255" value="placeholder">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="">Valor de Placeholder:</label>
+                        <input type="number" name="valor de placeholder" min="0" max="255" value="placeholder">
+                    </div>
+                    
+                    <button type="submit" name="apply_threshold">Aplicar Threshold</button>
+                </form>
+            </div>
+        </div>
 
         {% else %}
 
