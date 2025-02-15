@@ -190,10 +190,45 @@ button:hover {
 /* ------- SEGMENTATION RESULT SECTION  ------- */
 
 .horizontal-line {
-    width: 100%;
+    width: 95%;
     height: 4px;
     background-color: #007bff;
     margin: 20px 0;
     border-radius: 2px;
     margin: 70px 0 40px 0; 
+}
+
+.segmentation-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Cria 3 colunas por linha */
+    gap: 20px; /* Espaçamento entre os itens */
+    justify-items: center; /* Centraliza as imagens dentro das colunas */
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+.segmented-item {
+    text-align: center;
+    background: #f8f9fa; /* Fundo leve para separar os blocos */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 320px; /* Limita a largura máxima */
+}
+
+.segmented-item img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.segmented-item a img {
+    transition: transform 0.2s ease-in-out;
+}
+
+.segmented-item a img:hover {
+    transform: scale(1.05); 
+    cursor: pointer; 
 }
