@@ -74,16 +74,18 @@
 
         {% endif %}
 
-        <br>
-
+        <!-- Imagens segmentadas -->
         {% if segmented_filenames %}
-            <h3>Imagens Segmentadas</h3>
-                {% for segmented_filename in segmented_filenames %}
-                    <img src="{{ url_for('main.processed_file_path', filename=segmented_filename) }}" alt="Imagem Segmentada" width="300">
-                {% endfor %}
-        {% endif %}
+            <div class="horizontal-line"></div>
 
-        <br>
+            <h2 class="page_title">Resultado da Segmentação</h2>
+
+            {% for segmented in segmented_filenames %}
+                <p><strong>{{ segmented.method }}</strong></p>
+                <img src="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" alt="Imagem Segmentada" width="300">
+            {% endfor %}
+
+        {% endif %}
 
     </section>
 

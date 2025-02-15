@@ -31,7 +31,24 @@ def apply_segmentation(filename, method, threshold_value):
 
     # Seleciona o método de segmentação
     if method == "threshold":
-        return apply_threshold(upload_path, threshold_value)
+        #return apply_multiple_thresholds(upload_path, threshold_value)
+
+        # Chama a função que gera múltiplas imagens segmentadas
+        segmented_files = apply_multiple_thresholds(upload_path, threshold_value)
+
+        # Nomes correspondentes para os métodos aplicados
+        method_names = [
+            "Threshold Binário",
+            "Threshold Binário Invertido",
+            "Threshold Truncado",
+            "Threshold para Zero",
+            "Threshold para Zero Invertido"
+        ]
+
+        # Retorna uma lista de dicionários com os nomes e métodos
+        return [{"filename": segmented_files[i], "method": method_names[i]} for i in range(len(segmented_files))]
+
 
     # Outros métodos podem ser adicionados aqui futuramente
+
     return []
