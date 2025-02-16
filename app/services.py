@@ -29,12 +29,12 @@ def save_uploaded_image(file):
 # ----------------- MÉTODOS DE SEGMENTAÇÃO -----------------
 
 
-def apply_threshold(filename, threshold_value):
+def apply_threshold(filename, threshold_value, block_size, c_value):
     """Aplica múltiplas variações de thresholding na imagem."""
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
     # Aplica múltiplos métodos de threshold e obtém um dicionário de arquivos segmentados
-    segmented_files = threshold(upload_path, threshold_value)
+    segmented_files = threshold(upload_path, threshold_value, block_size, c_value)
 
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

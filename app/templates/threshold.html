@@ -3,7 +3,7 @@
 {% block title %} Segmentação por Limiarização {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/threshold.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/segmentation.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -33,7 +33,7 @@
             <div class="right-section">
                 <!-- Segundo formulário: Enviar o valor do threshold -->
                 <h3 class="page_subtitle">Parâmetros de segmentação</h3>
-                <form action="" method="POST" id='apply_area'>
+                <form action="#page_title" method="POST" id='apply_area'>
                     <input type="hidden" name="filename" value="{{ filename }}">
 
                     <!-- Primeiro input -->
@@ -43,16 +43,16 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="">Tamanho do bloco (Limiarização Adaptativa):</label>
-                        <input type="number" name="valor de placeholder" min="0" max="255" value="placeholder">
+                        <label for="">Tamanho do bloco (valor ímpar entre 3 e 51):</label>
+                        <input type="number" id="block_size" name="block_size" value="11" min="3" max="51" step="2" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="">Subtração do valor limiar (Limiarização Adaptativa)</label>
-                        <input type="number" name="valor de placeholder" min="0" max="255" value="placeholder">
+                        <label for="">Valor C (valor entre -10 e 20)</label>
+                        <input type="number" id="c_value" name="c_value" value="2" min="-10" max="20" step="1" required>
                     </div>
                     
-                    <button type="submit" name="apply_threshold">Aplicar Threshold</button>
+                    <button type="submit" name="apply_threshold" >Aplicar Threshold</button>
                 </form>
             </div>
         </div>
@@ -72,9 +72,9 @@
 
         <!-- Imagens segmentadas resultado da segmentação-->
         {% if segmented_filenames %}
-        <div class="horizontal-line"></div>
+        <div id="horizontal-line" class="horizontal-line"></div>
 
-        <h2 class="page_title">Resultado da Segmentação</h2>
+        <h2 id="page_title" class="page_title">Resultado da Segmentação</h2>
 
         <div class="segmentation-results">
             {% for segmented in segmented_filenames %}

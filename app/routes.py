@@ -28,16 +28,20 @@ def threshold_page():
     if request.method == 'POST':
         if 'image' in request.files:
             file = request.files['image']
-            filename = save_uploaded_image(file)  # Agora usando a função modularizada
+            filename = save_uploaded_image(file)  
 
         if 'apply_threshold' in request.form:
+            # PEGANDO PARÂMETROS
             filename = request.form.get('filename')
             threshold_value = request.form.get('threshold_value', type=int)
+            block_size = request.form.get('block_size', type=int)
+            c_value = request.form.get('c_value', type=int)
 
             if filename and threshold_value is not None:
-                segmented_filenames = apply_threshold(filename, threshold_value)
+                # APLICANDO MÉTODO DE SEGMENTAÇÃO
+                segmented_filenames = apply_threshold(filename, threshold_value, block_size, c_value)
 
                 if segmented_filenames:
-                    ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  # Garante que a pasta processed existe
+                    ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
 
     return render_template('threshold.html', filename=filename, segmented_filenames=segmented_filenames)
