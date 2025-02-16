@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import current_app
 from werkzeug.utils import secure_filename
 
-from app.segmentation.thresholding import apply_multiple_thresholds, apply_threshold
+from app.segmentation.thresholding import threshold
 
 def ensure_folder_exists(folder_path):
     """ Garante que a pasta existe, se não, cria. """
@@ -14,10 +14,10 @@ def save_uploaded_image(file):
     if file and file.filename != '':
         file_extension = os.path.splitext(secure_filename(file.filename))[1]
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"image_{timestamp}{file_extension}"
+        filename = f"{timestamp}{file_extension}"
 
         upload_folder = current_app.config['UPLOAD_FOLDER']
-        ensure_folder_exists(upload_folder)  # Certifica-se de que a pasta existe
+        ensure_folder_exists(upload_folder)  
         upload_path = os.path.join(upload_folder, filename)
 
         file.save(upload_path)
@@ -25,30 +25,16 @@ def save_uploaded_image(file):
 
     return None
 
-def apply_segmentation(filename, method, threshold_value):
-    """ Aplica um método de segmentação na imagem e retorna os arquivos processados. """
+
+# ----------------- MÉTODOS DE SEGMENTAÇÃO -----------------
+
+
+def apply_threshold(filename, threshold_value):
+    """Aplica múltiplas variações de thresholding na imagem."""
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
-    # Seleciona o método de segmentação
-    if method == "threshold":
-        #return apply_multiple_thresholds(upload_path, threshold_value)
+    # Aplica múltiplos métodos de threshold e obtém um dicionário de arquivos segmentados
+    segmented_files = threshold(upload_path, threshold_value)
 
-        # Chama a função que gera múltiplas imagens segmentadas
-        segmented_files = apply_multiple_thresholds(upload_path, threshold_value)
-
-        # Nomes correspondentes para os métodos aplicados
-        method_names = [
-            "Threshold Binário",
-            "Threshold Binário Invertido",
-            "Threshold Truncado",
-            "Threshold para Zero",
-            "Threshold para Zero Invertido"
-        ]
-
-        # Retorna uma lista de dicionários com os nomes e métodos
-        return [{"filename": segmented_files[i], "method": method_names[i]} for i in range(len(segmented_files))]
-
-
-    # Outros métodos podem ser adicionados aqui futuramente
-
-    return []
+    # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
+    return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

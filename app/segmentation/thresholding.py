@@ -1,65 +1,37 @@
 import os
 import cv2
-import numpy as np
 from flask import current_app
 
-def apply_threshold(image_path, threshold_value):
-    # Lê a imagem em escala de cinza
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    
-    if image is None:
-        return []
+def threshold(image_path, threshold_value=128, block_size=11, c_value=2):
 
-    # Aplica o thresholding binário
-    _, thresholded_image = cv2.threshold(image, threshold_value, 255, cv2.THRESH_BINARY)
-
-    # Define o caminho para salvar a imagem segmentada
-    processed_folder = current_app.config['PROCESSED_FOLDER']
-    os.makedirs(processed_folder, exist_ok=True)  # Garante que a pasta exista
-    
-    segmented_filename = f"segmented_{os.path.basename(image_path)}"
-    processed_path = os.path.join(processed_folder, segmented_filename)
-
-    # Salva a imagem segmentada na pasta processed/
-    cv2.imwrite(processed_path, thresholded_image)
-
-    return [segmented_filename]  # Retorna uma lista, mesmo que tenha um único elemento
-
-
-def apply_multiple_thresholds(image_path, threshold_value):
-    # Lê a imagem em escala de cinza
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
     if image is None:
         return []
-
-    # Definição dos métodos de threshold disponíveis
-    threshold_methods = {
-        "binary": cv2.THRESH_BINARY,
-        "binary_inv": cv2.THRESH_BINARY_INV,
-        "trunc": cv2.THRESH_TRUNC,
-        "tozero": cv2.THRESH_TOZERO,
-        "tozero_inv": cv2.THRESH_TOZERO_INV
-    }
 
     # Criar a pasta para salvar os arquivos processados
     processed_folder = current_app.config['PROCESSED_FOLDER']
     os.makedirs(processed_folder, exist_ok=True)
 
-    segmented_filenames = []
+    segmented_filenames = {}
 
-    # Aplicar cada método de threshold e salvar o resultado
-    for method_name, method in threshold_methods.items():
-        _, thresholded_image = cv2.threshold(image, threshold_value, 255, method)
+    # Thresholding Binário
+    _, binary_image = cv2.threshold(image, threshold_value, 255, cv2.THRESH_BINARY)
+    binary_filename = f"binary_{os.path.basename(image_path)}"
+    cv2.imwrite(os.path.join(processed_folder, binary_filename), binary_image)
+    segmented_filenames["Threshold Binário"] = binary_filename
 
-        # Nome do arquivo segmentado
-        segmented_filename = f"{method_name}_{os.path.basename(image_path)}"
-        processed_path = os.path.join(processed_folder, segmented_filename)
+    # Otsu's Thresholding
+    _, otsu_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    otsu_filename = f"otsu_{os.path.basename(image_path)}"
+    cv2.imwrite(os.path.join(processed_folder, otsu_filename), otsu_image)
+    segmented_filenames["Threshold Otsu"] = otsu_filename
 
-        # Salvar a imagem segmentada
-        cv2.imwrite(processed_path, thresholded_image)
+    # Adaptive Thresholding
+    adaptive_image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                           cv2.THRESH_BINARY, block_size, c_value)
+    adaptive_filename = f"adaptive_{os.path.basename(image_path)}"
+    cv2.imwrite(os.path.join(processed_folder, adaptive_filename), adaptive_image)
+    segmented_filenames["Threshold Adaptativo"] = adaptive_filename
 
-        # Adicionar à lista de arquivos segmentados
-        segmented_filenames.append(segmented_filename)
-
-    return segmented_filenames  # Retorna a lista com todas as imagens segmentadas
+    return segmented_filenames  # Retorna um dicionário com os nomes dos arquivos segmentados

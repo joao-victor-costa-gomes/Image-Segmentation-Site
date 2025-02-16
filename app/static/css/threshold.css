@@ -200,21 +200,21 @@ button:hover {
 
 .segmentation-results {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Cria 3 colunas por linha */
-    gap: 20px; /* Espaçamento entre os itens */
-    justify-items: center; /* Centraliza as imagens dentro das colunas */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+    justify-items: center; 
     margin-top: 20px;
     margin-bottom: 50px;
 }
 
 .segmented-item {
     text-align: center;
-    background: #f8f9fa; /* Fundo leve para separar os blocos */
+    background: #f8f9fa; 
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 320px; /* Limita a largura máxima */
+    max-width: 320px; 
 }
 
 .segmented-item img {
@@ -226,6 +226,10 @@ button:hover {
 
 .segmented-item a img {
     transition: transform 0.2s ease-in-out;
+}
+
+.segmented-item:hover {
+    border: #007bff solid 2px; 
 }
 
 .segmented-item a img:hover {
