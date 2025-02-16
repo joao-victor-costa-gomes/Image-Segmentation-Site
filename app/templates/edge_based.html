@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Segmentação por Limiarização {% endblock %}
+{% block title %} Segmentação Baseada em Bordas {% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/segmentation.css') }}">
@@ -10,7 +10,7 @@
 
     <section class="segmentation_page_section">
 
-        <h2 class="page_title">Segmentação por Limiarização</h2>
+        <h2 class="page_title">Segmentação Baseada em Bordas</h2>
 
         <!-- Se nenhuma imagem for enviada, carregar primeiro formulário, se não, carregar o segundo -->
         {% if filename %}
@@ -24,7 +24,7 @@
 
                 <!-- Botão para "remover" (resetar o estado da página) -->
                 <div class="remove-button-container">
-                    <form action="{{ url_for('main.threshold_page') }}" method="GET" style="margin-top: 10px;">
+                    <form action="{{ url_for('main.canny_edge_page') }}" method="GET" style="margin-top: 10px;">
                         <button type="submit" class="remove-btn">❌</button>
                     </form>
                 </div>
@@ -35,23 +35,18 @@
                 <h3 class="page_subtitle">Parâmetros de segmentação</h3>
                 <form action="#page_title" method="POST" id='apply_area'>
                     <input type="hidden" name="filename" value="{{ filename }}">
-                    
+
                     <div class="input-group">
-                        <label for="threshold_value">Valor do Threshold:</label>
-                        <input type="number" name="threshold_value" min="0" max="255" value="150" required>
+                        <label for="">Valor mínimo:</label>
+                        <input type="number" name="min_val" value="50" min="0" max="255"  required>
                     </div>
 
                     <div class="input-group">
-                        <label for="">Tamanho do bloco (valor ímpar entre 3 e 51):</label>
-                        <input type="number" name="block_size" value="11" min="3" max="51" step="2" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="">Valor C (valor entre -10 e 20)</label>
-                        <input type="number" id="c_value" name="c_value" value="2" min="-10" max="20" step="1" required>
+                        <label for="">Valor máximo:</label>
+                        <input type="number" name="max_val" value="150" min="0" max="255"  required>
                     </div>
                     
-                    <button type="submit" name="apply_threshold" >Aplicar Threshold</button>
+                    <button type="submit" name="apply_canny_edge" >Aplicar Canny Edge</button>
                 </form>
             </div>
         </div>
@@ -59,12 +54,12 @@
         {% else %}
 
         <!-- Primeiro formulário: Upload da imagem -->
-        <form id="upload-form" action="{{ url_for('main.threshold_page') }}" method="POST" enctype="multipart/form-data">
+        <form id="upload-form" action="{{ url_for('main.canny_edge_page') }}" method="POST" enctype="multipart/form-data">
             <label id="drop-area" class="upload-box">
                 <input type="file" id="file-input" name="image" accept="image/png, image/jpeg" hidden>
                 <img src="{{ url_for('static', filename='images/upload_icon.png') }}" alt="Upload Icon" class="upload-icon">
                 <p>Arraste e solte a imagem aqui ou clique para selecionar</p>
-            </label>
+            </label> 
         </form>
 
         {% endif %}

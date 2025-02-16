@@ -14,13 +14,13 @@
         <div class="card-container">
             <!-- Card 1 -->
             <a class="card" href="{{ url_for('main.threshold_page') }}">
-                <img src="{{ url_for('static', filename='images/thresholdingB.png') }}" alt="limiarizacao" class="card-image">
+                <img src="{{ url_for('static', filename='images/thresholding.png') }}" alt="limiarizacao" class="card-image">
                 <div class="card-title">LIMIARIZAÇÃO</div>
             </a> 
 
             <!-- Card 2 -->
-            <a class="card" href="#">
-                <img src="../static/images/placeholder.png" alt="baseada em bordas" class="card-image">
+            <a class="card" href="{{ url_for('main.canny_edge_page') }}">
+                <img src="../static/images/canny_edge.png" alt="baseada em bordas" class="card-image">
                 <div class="card-title">BASEADA EM BORDAS</div>
             </a> 
 
