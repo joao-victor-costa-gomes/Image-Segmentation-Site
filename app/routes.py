@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, request, current_app, send_from_directory, redirect, url_for
 from app.services import save_uploaded_image, ensure_folder_exists
 
-from app.services import apply_threshold, apply_canny_edge, apply_region_based
+from app.services import apply_threshold, apply_canny_edge, apply_region_based, apply_clustering_based
 
 # Criando um Blueprint contendo todas essas rotas abaixo
 main = Blueprint('main', __name__)
@@ -98,3 +98,28 @@ def region_based_page():
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
 
     return render_template('region_based.html', filename=filename, segmented_filenames=segmented_filenames)
+
+@main.route('/clustering_based', methods=['GET', 'POST'])
+def clustering_based_page():
+    filename = None
+    segmented_filenames = None
+
+    if request.method == 'POST':
+        if 'image' in request.files:
+            file = request.files['image']
+            filename = save_uploaded_image(file)  
+
+        if 'apply_clustering_based' in request.form:
+            # PEGANDO PARÂMETROS
+            filename = request.form.get('filename')
+            k = request.form.get('k', type=int)
+            attempts = request.form.get('attempts', type=int)
+
+            if filename is not None:
+                # APLICANDO MÉTODO DE SEGMENTAÇÃO
+                segmented_filenames = apply_clustering_based(filename, k, attempts)
+
+                if segmented_filenames:
+                    ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
+
+    return render_template('clustering_based.html', filename=filename, segmented_filenames=segmented_filenames)
