@@ -8,6 +8,7 @@ from app.segmentation.thresholding import threshold
 from app.segmentation.edge_based import canny_edge
 from app.segmentation.region_based import region_based
 from app.segmentation.clustering import kmeans
+from app.segmentation.color_based import color_based
 
 def ensure_folder_exists(folder_path):
     """ Garante que a pasta existe, se não, cria. """
@@ -64,6 +65,15 @@ def apply_clustering_based(filename, k, attempts):
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
     segmented_files = kmeans(upload_path, k, attempts)
+
+    # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
+    return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
+
+# Color-based
+def apply_color_based(filename, lower_bound, upper_bound):
+    upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
+    segmented_files = color_based(upload_path, lower_bound, upper_bound)
 
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

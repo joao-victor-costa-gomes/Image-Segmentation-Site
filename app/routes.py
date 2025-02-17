@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, request, current_app, send_from_directory, redirect, url_for
 from app.services import save_uploaded_image, ensure_folder_exists
 
-from app.services import apply_threshold, apply_canny_edge, apply_region_based, apply_clustering_based
+from app.services import apply_threshold, apply_canny_edge, apply_region_based, apply_clustering_based, apply_color_based
 
 # Criando um Blueprint contendo todas essas rotas abaixo
 main = Blueprint('main', __name__)
@@ -99,6 +99,7 @@ def region_based_page():
 
     return render_template('region_based.html', filename=filename, segmented_filenames=segmented_filenames)
 
+
 @main.route('/clustering_based', methods=['GET', 'POST'])
 def clustering_based_page():
     filename = None
@@ -123,3 +124,33 @@ def clustering_based_page():
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
 
     return render_template('clustering_based.html', filename=filename, segmented_filenames=segmented_filenames)
+
+
+@main.route('/color_based', methods=['GET', 'POST'])
+def color_based_page():
+    filename = None
+    segmented_filenames = None
+
+    if request.method == 'POST':
+        if 'image' in request.files:
+            file = request.files['image']
+            filename = save_uploaded_image(file)  
+
+        if 'apply_color_based' in request.form:
+            # PEGANDO PARÂMETROS
+            filename = request.form.get('filename')
+            h_min = request.form.get('h_min', type=int)
+            h_max = request.form.get('h_max', type=int)
+            s_min = request.form.get('s_min', type=int)
+            s_max = request.form.get('s_max', type=int)
+            v_min = request.form.get('v_min', type=int)
+            v_max = request.form.get('v_max', type=int)
+
+            if filename is not None:
+                # APLICANDO MÉTODO DE SEGMENTAÇÃO
+                segmented_filenames = apply_color_based(filename, (h_min, s_min, v_min), (h_max, s_max, v_max))
+
+                if segmented_filenames:
+                    ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
+
+    return render_template('color_based.html', filename=filename, segmented_filenames=segmented_filenames)
