@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %} Segmentação com Watershed {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/segmentation.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <section class="segmentation_page_section">
+
+        <h2 class="page_title">Segmentação com Watershed</h2>
+
+        <!-- Se nenhuma imagem for enviada, carregar primeiro formulário, se não, carregar o segundo -->
+        {% if filename %}
+
+        <!-- Container principal das duas seções -->
+        <div class="segmentation-container">
+
+            <div class="left-section">
+                <h3 class="page_subtitle">Imagem enviada</h3>
+                <img src="{{ url_for('main.uploaded_file_path', filename=filename) }}" alt="Imagem Enviada" width="400">
+
+                <!-- Botão para "remover" (resetar o estado da página) -->
+                <div class="remove-button-container">
+                    <form action="{{ url_for('main.watershed_page') }}" method="GET" style="margin-top: 10px;">
+                        <button type="submit" class="remove-btn">❌</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-section">
+                <!-- Segundo formulário: Envio de parâmetros -->
+                <h3 class="page_subtitle">Parâmetros de segmentação</h3>
+                <form action="#page_title" method="POST" id='apply_area'>
+                    <input type="hidden" name="filename" value="{{ filename }}">
+                    
+                    <button type="submit" name="apply_watershed" >Aplicar Segmentação</button>
+                </form>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- Primeiro formulário: Upload da imagem -->
+        <form id="upload-form" action="{{ url_for('main.watershed_page') }}" method="POST" enctype="multipart/form-data">
+            <label id="drop-area" class="upload-box">
+                <input type="file" id="file-input" name="image" accept="image/png, image/jpeg" hidden>
+                <img src="{{ url_for('static', filename='images/upload_icon.png') }}" alt="Upload Icon" class="upload-icon">
+                <p>Arraste e solte a imagem aqui ou clique para selecionar</p>
+            </label> 
+        </form>
+
+        {% endif %}
+
+        <!-- Imagens segmentadas resultado da segmentação-->
+        {% if segmented_filenames %}
+        <div id="horizontal-line" class="horizontal-line"></div>
+
+        <h2 id="page_title" class="page_title">Resultado da Segmentação</h2>
+
+        <div class="segmentation-results">
+            {% for segmented in segmented_filenames %}
+                <div class="segmented-item">
+                    <p><strong>{{ segmented.method }}</strong></p>
+                    <a href="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" target="_blank">
+                        <img src="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" alt="Imagem Segmentada">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    </section>
+
+    <script src="{{ url_for('static', filename='js/drag_and_drop.js') }}"></script>
+{% endblock %}
