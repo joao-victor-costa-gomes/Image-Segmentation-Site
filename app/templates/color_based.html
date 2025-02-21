@@ -36,35 +36,45 @@
                 <form action="#page_title" method="POST" id='apply_area'>
                     <input type="hidden" name="filename" value="{{ filename }}">
 
-                    <div class="input-group">
-                        <label for="h_min">H Mín:</label>
-                        <input type="number" name="h_min" value="0" min="0" max="180" required>
+                    <div class="hsv-group">
+                        <div class="input-group small-input">
+                            <label for="h_min">H Mín:</label>
+                            <input type="number" name="h_min" id="h_min" value="0" min="0" max="179" required>
+                        </div>
+
+                        <div class="input-group small-input">
+                            <label for="s_min">S Mín:</label>
+                            <input type="number" name="s_min" id="s_min" value="0" min="0" max="255" required>
+                        </div>
+
+                        <div class="input-group small-input">
+                            <label for="v_min">V Mín:</label>
+                            <input type="number" name="v_min" id="v_min" value="0" min="0" max="255" required>
+                        </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="s_min">S Mín:</label>
-                        <input type="number" name="s_min" value="120" min="0" max="255" required>
+                    <div class="color-display">
+                        <p>COR SELECIONADA <span class="color-box" id="color_box_min"></span></p>
                     </div>
 
-                    <div class="input-group">
-                        <label for="v_min">V Mín:</label>
-                        <input type="number" name="v_min" value="70" min="0" max="255" required>
+                    <div class="hsv-group">
+                        <div class="input-group small-input">
+                            <label for="h_max">H Máx:</label>
+                            <input type="number" name="h_max" id="h_max" value="0" min="0" max="179" required>
+                        </div>
+                        <div class="input-group small-input">
+                            <label for="s_max">S Máx:</label>
+                            <input type="number" name="s_max" id="s_max" value="0" min="0" max="255" required>
+                        </div>
+                        <div class="input-group small-input">
+                            <label for="v_max">V Máx:</label>
+                            <input type="number" name="v_max" id="v_max" value="0" min="0" max="255" required>
+                        </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="h_max">H Máx:</label>
-                        <input type="number" name="h_max" value="10" min="0" max="180" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="s_max">S Máx:</label>
-                        <input type="number" name="s_max" value="255" min="0" max="255" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="v_max">V Máx:</label>
-                        <input type="number" name="v_max" value="255" min="0" max="255" required>
-                    </div>
+                <div class="color-display">
+                    <p>COR SELECIONADA  <span class="color-box" id="color_box_max"></span></p>
+                </div>
   
                     <button type="submit" name="apply_color_based" >Aplicar Segmentação</button>
                 </form>
@@ -105,4 +115,9 @@
     </section>
 
     <script src="{{ url_for('static', filename='js/drag_and_drop.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/color_box.js') }}" defer></script>
+</body>
+</html>
+
 {% endblock %}
