@@ -37,8 +37,18 @@
                     <input type="hidden" name="filename" value="{{ filename }}">
 
                     <div class="input-group">
-                        <label for="">Número de Regiões:</label>
-                        <input type="number" name="num_regions" value="3" min="1" max="10"  required>
+                        <label for="">Ponto de Origem X: (<a href="https://pixspy.com/" target="_blank">confira aqui</a>)</label>
+                        <input type="number" name="seed_point_x"  required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="">Ponto de Origem Y: (<a href="https://pixspy.com/" target="_blank">confira aqui</a>)</label>
+                        <input type="number" name="seed_point_y"  required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="">Valor de Threshold:</label>
+                        <input type="number" name="threshold" value="5" min="1" max="255"  required>
                     </div>
                     
                     <button type="submit" name="apply_region_based" >Aplicar Segmentação</button>

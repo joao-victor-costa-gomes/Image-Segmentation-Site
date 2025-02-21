@@ -53,10 +53,11 @@ def apply_canny_edge(filename, min_val, max_val):
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
 
 # Region-based 
-def apply_region_based(filename,num_regions):
+def apply_region_based(filename, seed_point, threshold):
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
-    segmented_files = region_based(upload_path, num_regions)
+    # segmented_files = region_based(upload_path, num_regions)
+    segmented_files = region_based(upload_path, seed_point, threshold)
 
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

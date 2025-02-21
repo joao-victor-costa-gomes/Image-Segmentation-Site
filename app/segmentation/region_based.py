@@ -1,90 +1,151 @@
 import os
 import cv2
 import numpy as np
+from collections import deque
 from flask import current_app
 
-def flattern_img(img):
-    """ Transforma a imagem 2D em um vetor de pixels. """
-    altura, largura = img.shape[:2]
-    return img.reshape(altura * largura, 3)  # Mantém os 3 canais de cor
 
-def segmenta_regioes(img, num_regions=3):
+def region_growing(image, seed_point, threshold=10):
     """
-    Segmenta a imagem em um número definido de regiões, utilizando tons de cinza.
+    Segmentação por Region Growing.
 
     Parâmetros:
-        - img (np.array): Imagem original carregada com OpenCV.
-        - num_regions (int): Número de regiões para segmentação.
+    - image: Imagem de entrada em escala de cinza ou RGB
+    - seed_point: Tupla (x, y) indicando o ponto semente
+    - threshold: Limiar de diferença de intensidade para crescimento
 
     Retorna:
-        - Imagem segmentada com tons de cinza.
+    - mask: Máscara com a região segmentada
     """
-    pixels = flattern_img(img).copy()
-    seg_regiao = np.zeros_like(pixels)  # Inicializa a imagem de saída
 
-    thresholds = np.linspace(0, 1, num_regions + 1)  # Define os intervalos para segmentação
+    # Converte para escala de cinza se for RGB
+    if len(image.shape) == 3:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image.copy()
 
-    # Criar tons de cinza com base no número de regiões
-    grayscale_values = np.linspace(0, 255, num_regions, dtype=np.uint8)
+    h, w = gray.shape
+    mask = np.zeros((h, w), dtype=np.uint8)
 
-    for i in range(len(pixels)):
-        mean_pixel = pixels[i].mean() / 255.0  # Normaliza para faixa [0, 1]
+    # Fila para processar pixels
+    queue = deque()
+    queue.append(seed_point)
 
-        # Encontra em qual faixa o pixel se encaixa
-        for j in range(num_regions):
-            if thresholds[j] <= mean_pixel < thresholds[j + 1]:
-                seg_regiao[i] = [grayscale_values[j]] * 3  # Aplica o tom de cinza
-                break
+    # Intensidade do ponto semente
+    seed_intensity = gray[seed_point[1], seed_point[0]]
 
-    seg_regiao = seg_regiao.reshape(img.shape[0], img.shape[1], 3)
-    return seg_regiao
+    # Vetores para checar vizinhos
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # 4-connectividade
 
-def save_segmented_image(image_path, segmented_image, method_name):
+    while queue:
+        x, y = queue.popleft()
+
+        if mask[y, x] == 0:
+            intensity_diff = abs(int(gray[y, x]) - int(seed_intensity))
+            if intensity_diff <= threshold:
+                mask[y, x] = 255
+
+                # Adiciona vizinhos à fila
+                for dx, dy in directions:
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < w and 0 <= ny < h and mask[ny, nx] == 0:
+                        queue.append((nx, ny))
+
+    return mask
+
+
+def apply_mask_on_image(image, mask):
     """
-    Salva a imagem segmentada na pasta processed/.
+    Aplica a máscara segmentada sobre a imagem original,
+    deixando a parte segmentada colorida e o restante em preto e branco.
 
     Parâmetros:
-        - image_path (str): Caminho da imagem original.
-        - segmented_image (np.array): Imagem segmentada.
-        - method_name (str): Nome do método para o nome do arquivo.
+    - image: Imagem original em RGB
+    - mask: Máscara da segmentação
 
     Retorna:
-        - Nome do arquivo salvo.
+    - result: Imagem com área segmentada colorida e o restante em tons de cinza
     """
+    # Converte imagem para escala de cinza
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray_image = cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR)
+
+    # Cria uma máscara booleana
+    mask_bool = mask == 255
+
+    # Aplica a máscara: área segmentada mantém as cores
+    result = np.where(mask_bool[:, :, None], image, gray_image)
+
+    return result
+
+
+def region_based(image_path, seed_point, threshold=10):
+    """
+    Função de Region Growing adaptada para projeto Flask.
+
+    Parâmetros:
+    - image_path: Caminho para a imagem enviada pelo usuário
+    - seed_point: Tupla (x, y) indicando o ponto semente
+    - threshold: Limiar de diferença de intensidade para crescimento
+
+    Retorna:
+    - segmented_filenames: Dicionário com os nomes dos arquivos segmentados
+    """
+
+    # Lê a imagem
+    image = cv2.imread(image_path)
+
+    if image is None:
+        return {}
+
+    # Executa o algoritmo de Region Growing
+    segmented_mask = region_growing(image, seed_point, threshold)
+
+    # Aplica a máscara para obter a imagem destacada
+    highlighted_image = apply_mask_on_image(image, segmented_mask)
+
+    # Diretório de saída definido no Flask
     processed_folder = current_app.config['PROCESSED_FOLDER']
     os.makedirs(processed_folder, exist_ok=True)
 
-    segmented_filename = f"{method_name}_{os.path.basename(image_path)}"
-    processed_path = os.path.join(processed_folder, segmented_filename)
+    # Gera nomes de arquivos
+    base_filename = os.path.basename(image_path)
+    mask_filename = f"region_growing_mask_{base_filename}"
+    highlighted_filename = f"region_growing_highlighted_{base_filename}"
 
-    cv2.imwrite(processed_path, segmented_image)
+    # Salva os arquivos
+    mask_path = os.path.join(processed_folder, mask_filename)
+    highlighted_path = os.path.join(processed_folder, highlighted_filename)
 
-    segmented_filenames = {}
-    segmented_filenames["Regiões"] = segmented_filename
+    cv2.imwrite(mask_path, segmented_mask)
+    cv2.imwrite(highlighted_path, highlighted_image)
 
-    return segmented_filenames  # Retorna o nome do arquivo salvo
+    # Retorna os nomes dos arquivos
+    segmented_filenames = {
+        "Region Growing": mask_filename,
+        "Region Growing - Destacado": highlighted_filename
+    }
 
-def region_based(image_path, num_regions=3):
-    """
-    Aplica segmentação baseada em regiões e salva a imagem.
+    return segmented_filenames
 
-    Parâmetros:
-        - image_path (str): Caminho da imagem original.
-        - num_regions (int): Número de regiões para segmentação.
 
-    Retorna:
-        - Nome do arquivo segmentado.
-    """
-    img = cv2.imread(image_path)
-    if img is None:
-        return None
+# ========== TESTE DO ALGORITMO ==========
+if __name__ == "__main__":
+    # Caminho da imagem
+    img_path = "images/a.png"
 
-    # Converter para escala de cinza
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img_gray = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2BGR)  # Mantém 3 canais
+    # Define o ponto semente manualmente
+    seed_point = (180, 90)
 
-    # Aplicar segmentação
-    segmented_img = segmenta_regioes(img_gray, num_regions)
+    # Simula o contexto do Flask
+    class MockApp:
+        config = {"PROCESSED_FOLDER": "processed"}
 
-    # Salvar imagem processada
-    return save_segmented_image(image_path, segmented_img, f"region_{num_regions}_regions_gray")
+    current_app = MockApp()
+
+    # Executa a segmentação
+    result_files = region_growing_flask(img_path, seed_point, threshold=15)
+
+    # Exibe os caminhos dos arquivos gerados
+    for title, filename in result_files.items():
+        print(f"{title}: {filename}")

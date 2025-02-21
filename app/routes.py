@@ -90,9 +90,13 @@ def region_based_page():
             filename = request.form.get('filename')
             num_regions = request.form.get('num_regions', type=int)
 
+            x = request.form.get('seed_point_x', type=int)
+            y = request.form.get('seed_point_y', type=int)
+            threshold = request.form.get('threshold', type=int)
+
             if filename is not None:
                 # APLICANDO MÉTODO DE SEGMENTAÇÃO
-                segmented_filenames = apply_region_based(filename, num_regions)
+                segmented_filenames = apply_region_based(filename, (x, y), threshold)
 
                 if segmented_filenames:
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
