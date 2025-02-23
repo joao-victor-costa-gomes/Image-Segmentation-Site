@@ -237,7 +237,7 @@ button:hover {
     cursor: pointer; 
 }
 
-/* ------- SPECIFIC STYLES  ------- */
+/* ------- REGION BASED SPECIFIC STYLES  ------- */
 .hsv-group {
     display: flex;
     justify-content: center;
@@ -277,4 +277,20 @@ button:hover {
     border: 2px solid #000;
     vertical-align: middle;
     border-radius: 5px;
+}
+
+/* ------- UTILS  ------- */
+#loading {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#loading img {
+    display: block;
+    margin: 0 auto;
+}
+
+#loading p {
+    font-size: 16px;
+    color: #555;
 }

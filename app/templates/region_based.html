@@ -75,6 +75,12 @@
 
         <h2 id="page_title" class="page_title">Resultado da Segmentação</h2>
 
+        <!-- GIF de carregamento -->
+        <div id="loading">
+            <img src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading" width="60">
+            <p>Carregando imagens...</p>
+        </div>
+
         <div class="segmentation-results">
             {% for segmented in segmented_filenames %}
                 <div class="segmented-item">
@@ -85,9 +91,46 @@
                 </div>
             {% endfor %}
         </div>
+    {% else %}
+
     {% endif %}
 
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loadingDiv = document.getElementById('loading');
+            const segmentationResults = document.querySelector('.segmentation-results');
+            const images = document.querySelectorAll('.segmentation-results img');
+            let imagesLoaded = 0;
+        
+            if (images.length === 0) {
+                // Nenhuma imagem, remove o loading imediatamente
+                loadingDiv.style.display = 'none';
+                segmentationResults.style.display = 'grid';
+            }
+        
+            images.forEach((img) => {
+                img.addEventListener('load', () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === images.length) {
+                        // Quando todas as imagens estiverem carregadas
+                        loadingDiv.style.display = 'none';
+                        segmentationResults.style.display = 'grid'; 
+                    }
+                });
+        
+                img.addEventListener('error', () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === images.length) {
+                        loadingDiv.style.display = 'none';
+                        segmentationResults.style.display = 'grid';
+                    }
+                });
+            });
+        });
+    </script>
+        
 
     <script src="{{ url_for('static', filename='js/drag_and_drop.js') }}"></script>
 {% endblock %}
