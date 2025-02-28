@@ -172,10 +172,18 @@ def watershed_page():
         if 'apply_watershed' in request.form:
             # PEGANDO PARÂMETROS
             filename = request.form.get('filename')
+            limiar_inversao = request.form.get("limiar_inversao", type=int)
+            kernel_gaussiano = request.form.get("kernel_gaussiano", type=int)
+            usar_otsu = request.form.get("usar_otsu") == "True"
+            limiar_manual = request.form.get("limiar_manual", type=int)
+            kernel_morfologico = request.form.get("kernel_morfologico", type=int)
+            limiar_dist_transform = request.form.get("limiar_dist_transform", type=float)
+            iteracoes_dilatacao = request.form.get("iteracoes_dilatacao", type=int)
+            iteracoes_erosao = request.form.get("iteracoes_erosao", type=int)
 
             if filename is not None:
                 # APLICANDO MÉTODO DE SEGMENTAÇÃO
-                segmented_filenames = apply_watershed(filename)
+                segmented_filenames = apply_watershed(filename, limiar_inversao, kernel_gaussiano, usar_otsu, limiar_manual, kernel_morfologico, limiar_dist_transform, iteracoes_dilatacao, iteracoes_erosao)
 
                 if segmented_filenames:
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  

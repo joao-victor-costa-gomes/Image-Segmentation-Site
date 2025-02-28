@@ -35,7 +35,50 @@
                 <h3 class="page_subtitle">Parâmetros de segmentação</h3>
                 <form action="#page_title" method="POST" id='apply_area'>
                     <input type="hidden" name="filename" value="{{ filename }}">
-                    
+
+                    <div class="input-group">
+                        <label>Valor limiar do fundo da imagem:</label>
+                        <input type="number" name="limiar_inversao" value="127" min="1" max="255" required>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Tamanho do kernel Gaussiano:</label>
+                        <input type="number" name="kernel_gaussiano" value="7" min="3" max="15" step="2" required>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Usar limiarização Otsu?</label>
+                        <select name="usar_otsu">
+                            <option value="True" selected>Sim</option>
+                            <option value="False">Não</option>
+                        </select>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Valor do limiar manual (se Otsu desativado):</label>
+                        <input type="number" name="limiar_manual" value="128" min="0" max="255">
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Tamanho do kernel morfológico:</label>
+                        <input type="number" name="kernel_morfologico" value="3" min="3" max="11" step="2" required>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Limiar da Transformada de Distância:</label>
+                        <input type="number" name="limiar_dist_transform" value="0.5" min="0.1" max="1" step="0.1" required>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Iterações da Dilatação:</label>
+                        <input type="number" name="iteracoes_dilatacao" value="3" min="1" max="10" required>
+                    </div>
+                
+                    <div class="input-group">
+                        <label>Iterações da Erosão:</label>
+                        <input type="number" name="iteracoes_erosao" value="2" min="1" max="10" required>
+                    </div>
+
                     <button type="submit" name="apply_watershed" >Aplicar Segmentação</button>
                 </form>
             </div>

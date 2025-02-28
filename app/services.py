@@ -9,7 +9,7 @@ from app.segmentation.edge_based import canny_edge
 from app.segmentation.region_based import region_based
 from app.segmentation.clustering import kmeans
 from app.segmentation.color_based import color_based
-from app.segmentation.watershed import watershed
+from app.segmentation.watershed import watershed_segmentation
 
 def ensure_folder_exists(folder_path):
     """ Garante que a pasta existe, se não, cria. """
@@ -30,7 +30,6 @@ def save_uploaded_image(file):
         return filename  # Retorna o nome do arquivo salvo
 
     return None
-
 
 # ----------------- MÉTODOS DE SEGMENTAÇÃO -----------------
 
@@ -81,10 +80,11 @@ def apply_color_based(filename, lower_bound, upper_bound):
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
 
 # Watershed
-def apply_watershed(filename):
+def apply_watershed(filename, limiar_inversao, kernel_gaussiano, usar_otsu, limiar_manual, kernel_morfologico, limiar_dist_transform, iteracoes_dilatacao, iteracoes_erosao):
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
-    segmented_files = watershed(upload_path)
+    # segmented_files = watershed(upload_path)
+    segmented_files = watershed_segmentation(upload_path, limiar_inversao, kernel_gaussiano, usar_otsu, limiar_manual, kernel_morfologico, limiar_dist_transform, iteracoes_dilatacao, iteracoes_erosao)
 
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
