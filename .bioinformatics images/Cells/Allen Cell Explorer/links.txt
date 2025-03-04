@@ -1,9 +1,0 @@
-https://cell-line-catalog.herokuapp.com/images/AICS-0034/single_plane_image_cl62.jpg
-
-https://cell-line-catalog.herokuapp.com/images/AICS-0095/single_plane_image_cl18.jpg
-
-https://cell-line-catalog.herokuapp.com/images/AICS-0074/single_plane_image_cl26.jpg
-
-https://cell-line-catalog.herokuapp.com/images/AICS-0013/single_plane_image_cl210.jpg
-
-https://cell-line-catalog.herokuapp.com/images/AICS-0025/single_plane_image_cl44.jpg
