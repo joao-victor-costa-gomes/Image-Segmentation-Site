@@ -13,6 +13,7 @@ from detectron2 import model_zoo
 # Classe que ajuda a visualizar os resultados das previsões do modelo
 from detectron2.utils.visualizer import Visualizer, ColorMode
 
+import os
 import cv2 
 import numpy
 import torch
@@ -26,6 +27,8 @@ class Detector:
         # Atributo que representa as configurações do nosso detector
         self.cfg = get_cfg()
         self.model_type = model_type
+        self.filename = None
+        self.segmentation_name = None
 
         # Object Detection
         if model_type == "OD": 
@@ -33,6 +36,8 @@ class Detector:
             self.cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml"))
             # Define o caminho para os pesos pretreinados do modelo treinado no conjunto de dados COCO
             self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml")
+            self.filename = "object_detection_"
+            self.segmentation_name = "Detecção de Objetos"
         
         # Instance Segmentation
         elif model_type == "IS":
@@ -40,6 +45,8 @@ class Detector:
             self.cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
             # Define o caminho para os pesos pretreinados do modelo treinado no conjunto de dados COCO
             self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
+            self.filename = "instance_segmentation_"
+            self.segmentation_name = "Segmentação de Instâncias"
 
         # Panoptic Segmentation
         elif model_type == "PS":
@@ -47,6 +54,8 @@ class Detector:
             self.cfg.merge_from_file(model_zoo.get_config_file("COCO-PanopticSegmentation/panoptic_fpn_R_101_3x.yaml"))
             # Define o caminho para os pesos pretreinados do modelo treinado no conjunto de dados COCO
             self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-PanopticSegmentation/panoptic_fpn_R_101_3x.yaml")
+            self.filename = "panopctic_segmentation_"
+            self.segmentation_name = "Segmentação Panóptica"
 
         # Define o limiar de confiança mínimo para cada detecção (70% ou mais)
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.8
@@ -78,8 +87,16 @@ class Detector:
             # Esse tipo de visualizer só desenha uma caixinha em volta dos objetos
             output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
 
-        cv2.imshow("Imagem Segmentada", output.get_image()[:, :, ::-1])
+        segmented_filename = f"{self.filename}{os.path.basename(image_path)}"
+
+        cv2.imshow(f"{self.segmentation_name}", output.get_image()[:, :, ::-1])
+        cv2.imwrite(f"{segmented_filename}.jpg", output.get_image()[:, :, ::-1])
         cv2.waitKey(0)
+
+        # segmented_filenames = {}
+        # segmented_filenames[f"{self.segmentation_name}"] = segmented_filename
+        # return segmented_filenames
+
 
 # ---------- APLICAÇÃO DO DETECTOR ----------
 
