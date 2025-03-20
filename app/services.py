@@ -10,6 +10,7 @@ from app.segmentation.region_based import region_based
 from app.segmentation.clustering import kmeans
 from app.segmentation.color_based import color_based
 from app.segmentation.watershed import watershed_segmentation
+from app.segmentation.detectron import Detector
 
 def ensure_folder_exists(folder_path):
     """ Garante que a pasta existe, se não, cria. """
@@ -85,6 +86,17 @@ def apply_watershed(filename, limiar_inversao, kernel_gaussiano, usar_otsu, limi
 
     # segmented_files = watershed(upload_path)
     segmented_files = watershed_segmentation(upload_path, limiar_inversao, kernel_gaussiano, usar_otsu, limiar_manual, kernel_morfologico, limiar_dist_transform, iteracoes_dilatacao, iteracoes_erosao)
+
+    # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
+    return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
+
+def apply_instance_segmentation(filename, confidence_threshold, device):
+    upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    
+    detector = Detector(model_type='IS', confidence_threshold=confidence_threshold, device=device)
+    print("Rodando segmentação de instâncias...")
+    segmented_files = detector.segmentar_imagem(upload_path)
+    print("Rodando segmentação de instâncias completo!")
 
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

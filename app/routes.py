@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, request, current_app, send_from_directory, redirect, url_for
 from app.services import save_uploaded_image, ensure_folder_exists
 
-from app.services import apply_threshold, apply_canny_edge, apply_region_based, apply_clustering_based, apply_color_based, apply_watershed
+from app.services import apply_threshold, apply_canny_edge, apply_region_based, apply_clustering_based, apply_color_based, apply_watershed, apply_instance_segmentation
 
 # Criando um Blueprint contendo todas essas rotas abaixo
 main = Blueprint('main', __name__)
@@ -189,3 +189,29 @@ def watershed_page():
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
 
     return render_template('watershed.html', filename=filename, segmented_filenames=segmented_filenames)
+
+
+@main.route('/instance_segmentation', methods=['GET', 'POST'])
+def instance_segmentation_page():
+    filename = None
+    segmented_filenames = None
+
+    if request.method == 'POST':
+        if 'image' in request.files:
+            file = request.files['image']
+            filename = save_uploaded_image(file)  
+
+        if 'apply_instance_segmentation' in request.form:
+            # PEGANDO PARÂMETROS
+            filename = request.form.get('filename')
+            confidence_threshold = float(request.form.get('confidence_threshold'))
+            device = request.form.get('device', type=str)
+
+            if filename is not None:
+                # APLICANDO MÉTODO DE SEGMENTAÇÃO
+                segmented_filenames = apply_instance_segmentation(filename, confidence_threshold, device)
+
+                if segmented_filenames:
+                    ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
+
+    return render_template('instance_segmentation.html', filename=filename, segmented_filenames=segmented_filenames)
