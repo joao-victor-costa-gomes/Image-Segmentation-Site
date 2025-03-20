@@ -12,6 +12,7 @@ from detectron2.data import MetadataCatalog
 from detectron2 import model_zoo
 # Classe que ajuda a visualizar os resultados das previsões do modelo
 from detectron2.utils.visualizer import Visualizer, ColorMode
+from detectron2.structures import Instances
 
 from detectron2.projects import point_rend
 
@@ -20,6 +21,14 @@ import cv2
 import numpy
 import torch
 from flask import current_app
+
+# Defina no topo do seu arquivo
+def clone_instances(instances):
+    from detectron2.structures import Instances
+    new_instances = Instances(instances.image_size)
+    for k, v in instances.get_fields().items():
+        new_instances.set(k, v.clone() if hasattr(v, 'clone') else v)
+    return new_instances
 
 # ---------- CRIAÇÃO DO DETECTOR ----------
 
@@ -75,40 +84,63 @@ class Detector:
         # Lê uma imagem
         image = cv2.imread(image_path)
 
-        if self.model_type != "PS":
-            # Utiliza o objeto predictor, já configurado, na imagem
-            predictions = self.predictor(image)
-            # Cria um objeto Visualizer que facilita a visualização dos resultados da segmentação
-            v = Visualizer(img_rgb=image[:, :, ::-1], metadata=MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]))
-            # Desenha as predições do modelo na imagem usando o Visualizer
-            # Esse tipo de visualizer só desenha uma caixinha em volta dos objetos
-            output = v.draw_instance_predictions(predictions["instances"].to("cpu"))
-        
-        else:
-            # Utiliza o objeto predictor, já configurado, na imagem
-            predictions, segmentation_info = self.predictor(image)["panoptic_seg"]
-            # Cria um objeto Visualizer que facilita a visualização dos resultados da segmentação
-            v = Visualizer(img_rgb=image[:, :, ::-1], metadata=MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]))
-            # Desenha as predições do modelo na imagem usando o Visualizer
-            # Esse tipo de visualizer só desenha uma caixinha em volta dos objetos
-            output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
-
-        segmented_image = output.get_image()[:, :, ::-1]
-
         # Criar a pasta para salvar os arquivos processados
         processed_folder = current_app.config['PROCESSED_FOLDER']
         os.makedirs(processed_folder, exist_ok=True)
-
-        # Nome do arquivo segmentado
-        segmented_filename = f"{self.filename}{os.path.basename(image_path)}"
-        processed_path = os.path.join(processed_folder, segmented_filename)
-
-        # Salvar a imagem segmentada
-        cv2.imwrite(os.path.join(processed_folder, segmented_filename), segmented_image)
+        base_name = os.path.basename(image_path)
 
         segmented_filenames = {}
-        segmented_filenames[f"{self.segmentation_name}"] = segmented_filename
+
+        if self.model_type != "PS":
+            # Realiza a predição
+            predictions = self.predictor(image)
+            instances = predictions["instances"].to("cpu")
+            metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
+            img_rgb = image[:, :, ::-1]
+
+            # Máscara + Caixas
+            v_all = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
+            output_all = v_all.draw_instance_predictions(instances)
+            image_all = output_all.get_image()[:, :, ::-1]
+            filename_all = f"{self.filename}{base_name}"
+            cv2.imwrite(os.path.join(processed_folder, filename_all), image_all)
+            segmented_filenames[f"{self.segmentation_name} (Máscara + Caixas)"] = filename_all
+
+            # Só Máscaras
+            instances_masks_only = clone_instances(instances)
+            if "pred_boxes" in instances_masks_only.get_fields():
+                instances_masks_only.remove("pred_boxes")
+            v_masks = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
+            output_masks = v_masks.draw_instance_predictions(instances_masks_only)
+            image_masks = output_masks.get_image()[:, :, ::-1]
+            filename_masks = f"{self.filename}masks_{base_name}"
+            cv2.imwrite(os.path.join(processed_folder, filename_masks), image_masks)
+            segmented_filenames[f"{self.segmentation_name} (Só Máscara)"] = filename_masks
+
+            # Só Caixas
+            instances_boxes_only = clone_instances(instances)
+            if "pred_masks" in instances_boxes_only.get_fields():
+                instances_boxes_only.remove("pred_masks")
+            v_boxes = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
+            output_boxes = v_boxes.draw_instance_predictions(instances_boxes_only)
+            image_boxes = output_boxes.get_image()[:, :, ::-1]
+            filename_boxes = f"{self.filename}boxes_{base_name}"
+            cv2.imwrite(os.path.join(processed_folder, filename_boxes), image_boxes)
+            segmented_filenames[f"{self.segmentation_name} (Só Caixas)"] = filename_boxes
+
+        else:
+            # Panoptic Segmentation
+            predictions, segmentation_info = self.predictor(image)["panoptic_seg"]
+            metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
+            v = Visualizer(img_rgb=image[:, :, ::-1], metadata=metadata)
+            output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
+            segmented_image = output.get_image()[:, :, ::-1]
+            filename_all = f"{self.filename}{base_name}"
+            cv2.imwrite(os.path.join(processed_folder, filename_all), segmented_image)
+            segmented_filenames[f"{self.segmentation_name}"] = filename_all
+
         return segmented_filenames
+
 
 
 # ---------- APLICAÇÃO DO DETECTOR ----------
