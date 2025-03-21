@@ -97,8 +97,17 @@ def apply_instance_segmentation(filename, confidence_threshold, device):
     # print("Rodando segmentação de instâncias...")
     segmented_files = detector.segmentar_imagem(upload_path)
     # print("Rodando segmentação de instâncias completo!")
-
     # print(f"\nParâmetros:\nfilename: {filename}\nconfidence_threshold: {confidence_threshold}\ndevice: {device}\n")
+    # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
+    return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
 
+def apply_panoptic_segmentation(filename, confidence_threshold, device):
+    upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    
+    detector = Detector(model_type='PS', confidence_threshold=confidence_threshold, device=device)
+    # print("Rodando segmentação de instâncias...")
+    segmented_files = detector.segmentar_imagem(upload_path)
+    # print("Rodando segmentação de instâncias completo!")
+    # print(f"\nParâmetros:\nfilename: {filename}\nconfidence_threshold: {confidence_threshold}\ndevice: {device}\n")
     # Retorna lista de dicionários com os arquivos e nomes dos métodos aplicados
     return [{"filename": segmented_files[key], "method": key} for key in segmented_files]

@@ -91,6 +91,7 @@ class Detector:
 
         segmented_filenames = {}
 
+        # SEGMENTAÇÃO DE INSTÂNCIAS
         if self.model_type != "PS":
             # Realiza a predição
             predictions = self.predictor(image)
@@ -102,6 +103,7 @@ class Detector:
             v_all = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
             output_all = v_all.draw_instance_predictions(instances)
             image_all = output_all.get_image()[:, :, ::-1]
+            # Salvando a imagem segmentada
             filename_all = f"{self.filename}{base_name}"
             cv2.imwrite(os.path.join(processed_folder, filename_all), image_all)
             segmented_filenames[f"{self.segmentation_name} (Máscara + Caixas)"] = filename_all
@@ -113,6 +115,7 @@ class Detector:
             v_masks = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
             output_masks = v_masks.draw_instance_predictions(instances_masks_only)
             image_masks = output_masks.get_image()[:, :, ::-1]
+            # Salvando a imagem segmentada
             filename_masks = f"{self.filename}masks_{base_name}"
             cv2.imwrite(os.path.join(processed_folder, filename_masks), image_masks)
             segmented_filenames[f"{self.segmentation_name} (Só Máscara)"] = filename_masks
@@ -124,14 +127,18 @@ class Detector:
             v_boxes = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
             output_boxes = v_boxes.draw_instance_predictions(instances_boxes_only)
             image_boxes = output_boxes.get_image()[:, :, ::-1]
+            # Salvando a imagem segmentada
             filename_boxes = f"{self.filename}boxes_{base_name}"
             cv2.imwrite(os.path.join(processed_folder, filename_boxes), image_boxes)
             segmented_filenames[f"{self.segmentation_name} (Só Caixas)"] = filename_boxes
 
+        # SEGMENTAÇÃO PANÓPTICA
         else:
-            # Panoptic Segmentation
+            # Realiza a predição
             predictions, segmentation_info = self.predictor(image)["panoptic_seg"]
             metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
+
+            
             v = Visualizer(img_rgb=image[:, :, ::-1], metadata=metadata)
             output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
             segmented_image = output.get_image()[:, :, ::-1]
