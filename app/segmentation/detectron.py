@@ -14,21 +14,75 @@ from detectron2 import model_zoo
 from detectron2.utils.visualizer import Visualizer, ColorMode
 from detectron2.structures import Instances
 
-from detectron2.projects import point_rend
+# from detectron2.projects import point_rend
 
 import os
 import cv2 
 import numpy
 import torch
 from flask import current_app
+from collections import defaultdict
+import time
 
-# Defina no topo do seu arquivo
+# ---------- FUNÇÕES IMPORTANTES ----------
+
 def clone_instances(instances):
     from detectron2.structures import Instances
     new_instances = Instances(instances.image_size)
     for k, v in instances.get_fields().items():
         new_instances.set(k, v.clone() if hasattr(v, 'clone') else v)
     return new_instances
+
+def gerar_resumo_segmentacao(instances, metadata, image_shape):
+    """
+    Gera resumo da segmentação de instâncias com contagem por classe, área, caixas e confiança.
+
+    Parâmetros:
+    - instances: objeto Instances do Detectron2.
+    - metadata: metadados do dataset (ex: MetadataCatalog).
+    - image_shape: shape da imagem original (altura, largura, canais).
+
+    Retorna:
+    - dicionário com resumo de classes, áreas, instâncias e porcentagens.
+    """
+    data_summary = {
+        "classes_detectadas": defaultdict(int),
+        "area_por_classe": defaultdict(int),
+        "instancias": []
+    }
+
+    class_names = metadata.get("thing_classes", [])
+    masks = instances.pred_masks if instances.has("pred_masks") else None
+    boxes = instances.pred_boxes if instances.has("pred_boxes") else None
+    scores = instances.scores.tolist()
+    pred_classes = instances.pred_classes.tolist()
+
+    for idx, cls_id in enumerate(pred_classes):
+        cls_name = class_names[cls_id] if cls_id < len(class_names) else str(cls_id)
+        data_summary["classes_detectadas"][cls_name] += 1
+
+        # Área da máscara
+        area = int(masks[idx].sum()) if masks is not None else 0
+        data_summary["area_por_classe"][cls_name] += area
+
+        # Bounding box
+        bbox = boxes[idx].tensor.tolist()[0] if boxes is not None else None
+
+        # Adiciona dados da instância
+        data_summary["instancias"].append({
+            "classe": cls_name,
+            "confiança": round(scores[idx], 3),
+            "área_pixels": area,
+            "bbox": bbox
+        })
+
+    # Calcular porcentagem de área (baseado no total da imagem)
+    total_pixels = image_shape[0] * image_shape[1]
+    for cls, area in data_summary["area_por_classe"].items():
+        perc = round((area / total_pixels) * 100, 2)
+        data_summary["area_por_classe"][cls] = f"{area} px ({perc}%)"
+
+    return data_summary
 
 # ---------- CRIAÇÃO DO DETECTOR ----------
 
@@ -81,6 +135,9 @@ class Detector:
         self.predictor = DefaultPredictor(self.cfg)
 
     def segmentar_imagem(self, image_path):
+
+        start_time = time.time() # INICIAR CONTADOR
+
         # Lê uma imagem
         image = cv2.imread(image_path)
 
@@ -90,6 +147,7 @@ class Detector:
         base_name = os.path.basename(image_path)
 
         segmented_filenames = {}
+        data_summary = {}
 
         # SEGMENTAÇÃO DE INSTÂNCIAS
         if self.model_type != "PS":
@@ -98,6 +156,9 @@ class Detector:
             instances = predictions["instances"].to("cpu")
             metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
             img_rgb = image[:, :, ::-1]
+
+            # Cálculo de dados da segmentação
+            data_summary = gerar_resumo_segmentacao(instances, metadata, image.shape)
 
             # Máscara + Caixas
             v_all = Visualizer(img_rgb=img_rgb.copy(), metadata=metadata)
@@ -144,12 +205,28 @@ class Detector:
             cv2.imwrite(os.path.join(processed_folder, filename_all), segmented_image)
             segmented_filenames[f"{self.segmentation_name}"] = filename_all
 
-        return segmented_filenames
+        processing_time = round(time.time() - start_time, 3) # FINALIZAR CONTADOR
 
 
 
-# ---------- APLICAÇÃO DO DETECTOR ----------
 
-if __name__ == "__main__":
-    segmentador = Detector(model_type="IS")
-    segmentador.segmentar_imagem("imagens/pedestres.jpg")
+        print("\n\n=== Arquivos Segmentados ===")
+        for nome, caminho in segmented_filenames.items():
+            print(f"{nome}: {caminho}")
+
+        print("\n=== Dados da Segmentação ===")
+        for chave, valor in data_summary.items():
+            print(f"{chave}:")
+            print(valor)
+
+        print("\n=== Tempo de Processamento ===")
+        print(f"{processing_time} segundos\n\n")
+
+
+
+
+        return {
+            "arquivos_segmentados": segmented_filenames,
+            "dados_segmentacao": data_summary,
+            "tempo_processamento_segundos": processing_time
+        }
