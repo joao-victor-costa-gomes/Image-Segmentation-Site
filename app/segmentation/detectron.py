@@ -137,8 +137,6 @@ class Detector:
             # Realiza a predição
             predictions, segmentation_info = self.predictor(image)["panoptic_seg"]
             metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
-
-            
             v = Visualizer(img_rgb=image[:, :, ::-1], metadata=metadata)
             output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
             segmented_image = output.get_image()[:, :, ::-1]

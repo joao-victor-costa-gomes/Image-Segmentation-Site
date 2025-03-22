@@ -84,6 +84,45 @@
                 </div>
             {% endfor %}
         </div>
+
+        <div id="horizontal-line" class="horizontal-line"></div>
+
+        <h2 id="page_title" class="page_title">Dados da Segmentação</h2>
+
+        <div class="data-section">
+
+            <div class="data-box">
+                <div class="data-box-title">Classes Detectadas</div>
+                <p><strong>célula</strong> : 28</p>
+                <p><strong>célula</strong> : 28</p>
+                <p><strong>célula</strong> : 28</p>
+                <p><strong>célula</strong> : 28</p>
+                <p><strong>célula</strong> : 28</p>
+            </div>
+        
+            <div class="data-box">
+                <div class="data-box-title">Área por Classe</div>
+                <p><strong>célula</strong> : 32.8%</p>
+                <p><strong>célula</strong> : 32.8%</p>
+                <p><strong>célula</strong> : 32.8%</p>
+            </div>
+        
+            <div class="data-box">
+                <div class="data-box-title">Instâncias</div>
+                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
+                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
+                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
+            </div>
+        
+            <div class="data-box">
+                <div class="data-box-title">Tempo de processamento</div>
+                <p>251.5 segundos</p>
+            </div>
+
+            <button type="submit" name="" >Baixar JSON dos dados</button>
+
+        </div>
+
     {% else %}
 
     {% endif %}
@@ -91,4 +130,5 @@
     </section> 
 
     <script src="{{ url_for('static', filename='js/drag_and_drop.js') }}"></script>
+
 {% endblock %}
