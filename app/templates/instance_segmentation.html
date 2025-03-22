@@ -68,18 +68,18 @@
         {% endif %}
 
         <!-- Imagens segmentadas resultado da segmentação-->
-        {% if segmented_filenames %}
+        {% if resultado_segmentacao %}
         <div id="horizontal-line" class="horizontal-line"></div>
 
         <h2 id="page_title" class="page_title">Resultado da Segmentação</h2>
         
 
         <div class="segmentation-results">
-            {% for segmented in segmented_filenames %}
+            {% for arquivo in resultado_segmentacao.arquivos %}
                 <div class="segmented-item">
-                    <p><strong>{{ segmented.method }}</strong></p>
-                    <a href="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" target="_blank">
-                        <img src="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" alt="Imagem Segmentada">
+                    <p><strong>{{ arquivo.method }}</strong></p>
+                    <a href="{{ url_for('main.processed_file_path', filename=arquivo.filename) }}" target="_blank">
+                        <img src="{{ url_for('main.processed_file_path', filename=arquivo.filename) }}" alt="Imagem Segmentada">
                     </a>
                 </div>
             {% endfor %}
@@ -91,32 +91,39 @@
 
         <div class="data-section">
 
+            <!-- Classes Detectadas -->
             <div class="data-box">
                 <div class="data-box-title">Classes Detectadas</div>
-                <p><strong>célula</strong> : 28</p>
-                <p><strong>célula</strong> : 28</p>
-                <p><strong>célula</strong> : 28</p>
-                <p><strong>célula</strong> : 28</p>
-                <p><strong>célula</strong> : 28</p>
+                {% for classe, quantidade in resultado_segmentacao.dados.classes_detectadas.items() %}
+                    <p><strong>{{ classe }}</strong> : {{ quantidade }}</p>
+                {% endfor %}
             </div>
         
+            <!-- Área por Classe -->
             <div class="data-box">
                 <div class="data-box-title">Área por Classe</div>
-                <p><strong>célula</strong> : 32.8%</p>
-                <p><strong>célula</strong> : 32.8%</p>
-                <p><strong>célula</strong> : 32.8%</p>
+                {% for classe, area in resultado_segmentacao.dados.area_por_classe.items() %}
+                    <p><strong>{{ classe }}</strong> : {{ area }}</p>
+                {% endfor %}
             </div>
         
+            <!-- Instâncias -->
             <div class="data-box">
                 <div class="data-box-title">Instâncias</div>
-                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
-                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
-                <p> <strong>classe</strong> : célula, <strong>confiança</strong> : 0.92, <strong>área</strong> : 1125, <strong>bbox</strong>: [320, 320, 320, 320]</p>
+                {% for inst in resultado_segmentacao.dados.instancias %}
+                    <p>
+                        <strong>classe</strong>: {{ inst.classe }},
+                        <strong>confiança</strong>: {{ inst.confiança }},
+                        <strong>área</strong>: {{ inst.área_pixels }},
+                        <strong>bbox</strong>: {{ inst.bbox }}
+                    </p>
+                {% endfor %}
             </div>
         
+            <!-- Tempo de processamento -->
             <div class="data-box">
                 <div class="data-box-title">Tempo de processamento</div>
-                <p>251.5 segundos</p>
+                <p>{{ resultado_segmentacao.tempo }} segundos</p>
             </div>
 
             <button type="submit" name="" >Baixar JSON dos dados</button>
@@ -124,7 +131,7 @@
         </div>
 
     {% else %}
-
+        
     {% endif %}
 
     </section> 

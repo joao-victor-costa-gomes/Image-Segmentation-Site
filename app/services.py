@@ -94,9 +94,23 @@ def apply_instance_segmentation(filename, confidence_threshold, device):
     
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     detector = Detector(model_type='IS', confidence_threshold=confidence_threshold, device=device)
-    segmented_files = detector.segmentar_imagem(upload_path)
+    resultado = detector.segmentar_imagem(upload_path)
 
-    return [{"filename": segmented_files[key], "method": key} for key in segmented_files]
+    # Arquivos segmentados
+    arquivos_segmentados = [
+        {"filename": resultado["arquivos_segmentados"][key], "method": key}
+        for key in resultado["arquivos_segmentados"]
+    ]
+    # Dados de segmentação 
+    dados_segmentacao = resultado["dados_segmentacao"]
+    # Tempo de processamento
+    tempo = resultado["tempo_processamento_segundos"]
+
+    return {
+        "arquivos": arquivos_segmentados,
+        "dados": dados_segmentacao,
+        "tempo": tempo
+    }
 
 def apply_panoptic_segmentation(filename, confidence_threshold, device):
     upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
