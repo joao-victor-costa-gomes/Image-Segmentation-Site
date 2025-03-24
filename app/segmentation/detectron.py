@@ -90,32 +90,25 @@ def gerar_resumo_segmentacao(instances, metadata, image_shape):
 
 # PARA SEGMENTAÇÃO PANÓPTICA
 def gerar_resumo_panoptico(segmentation_info, metadata, panoptic_seg_map, image_shape):
-    """
-    Gera resumo da segmentação panóptica com contagem por classe, área e porcentagem.
-
-    Parâmetros:
-    - segmentation_info: lista de segmentos com chaves 'category_id' e 'isthing'.
-    - metadata: metadados do dataset (ex: MetadataCatalog).
-    - panoptic_seg_map: mapa de segmentos (H x W) com rótulos inteiros.
-    - image_shape: shape da imagem original.
-
-    Retorna:
-    - dicionário com resumo de classes, áreas e porcentagens.
-    """
     data_summary = {
         "classes_detectadas": defaultdict(int),
         "area_por_classe": defaultdict(int),
         "segmentos": []
     }
 
-    class_names = metadata.get("thing_classes", []) + metadata.get("stuff_classes", [])
+    thing_classes = metadata.get("thing_classes", [])
+    stuff_classes = metadata.get("stuff_classes", [])
     total_pixels = image_shape[0] * image_shape[1]
 
     for segment in segmentation_info:
         category_id = segment["category_id"]
-        class_name = class_names[category_id] if category_id < len(class_names) else str(category_id)
+        is_thing = segment.get("isthing", True)
 
-        # Contar pixels com valor do segmento atual
+        if is_thing:
+            class_name = thing_classes[category_id] if category_id < len(thing_classes) else str(category_id)
+        else:
+            class_name = stuff_classes[category_id] if category_id < len(stuff_classes) else str(category_id)
+
         mask = (panoptic_seg_map == segment["id"])
         area = int(mask.sum())
         data_summary["classes_detectadas"][class_name] += 1
@@ -123,15 +116,16 @@ def gerar_resumo_panoptico(segmentation_info, metadata, panoptic_seg_map, image_
 
         data_summary["segmentos"].append({
             "classe": class_name,
-            "área_pixels": area
+            "área_pixels": area,
+            "tipo": "thing" if is_thing else "stuff"
         })
 
-    # Calcular porcentagem de área
     for cls, area in data_summary["area_por_classe"].items():
         perc = round((area / total_pixels) * 100, 2)
         data_summary["area_por_classe"][cls] = f"{area} px ({perc}%)"
 
     return data_summary
+
 
 
 # ---------- CRIAÇÃO DO DETECTOR ----------
