@@ -68,22 +68,68 @@
         {% endif %}
 
         <!-- Imagens segmentadas resultado da segmentação-->
-        {% if segmented_filenames %}
+        {% if resultado_segmentacao %}
         <div id="horizontal-line" class="horizontal-line"></div>
 
         <h2 id="page_title" class="page_title">Resultado da Segmentação</h2>
         
 
         <div class="segmentation-results">
-            {% for segmented in segmented_filenames %}
+            {% for arquivo in resultado_segmentacao.arquivos %}
                 <div class="segmented-item">
-                    <p><strong>{{ segmented.method }}</strong></p>
-                    <a href="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" target="_blank">
-                        <img src="{{ url_for('main.processed_file_path', filename=segmented.filename) }}" alt="Imagem Segmentada">
+                    <p><strong>{{ arquivo.method }}</strong></p>
+                    <a href="{{ url_for('main.processed_file_path', filename=arquivo.filename) }}" target="_blank">
+                        <img src="{{ url_for('main.processed_file_path', filename=arquivo.filename) }}" alt="Imagem Segmentada">
                     </a>
                 </div>
             {% endfor %}
         </div>
+
+        <div id="horizontal-line" class="horizontal-line"></div>
+
+        <h2 id="page_title" class="page_title">Dados da Segmentação</h2>
+
+        <div class="data-section">
+
+            <!-- Classes Detectadas -->
+            <div class="data-box">
+                <div class="data-box-title">Classes Detectadas</div>
+                {% for classe, quantidade in resultado_segmentacao.dados.classes_detectadas.items() %}
+                    <p><strong>{{ classe }}</strong> : {{ quantidade }}</p>
+                {% endfor %}
+            </div>
+        
+            <!-- Área por Classe -->
+            <div class="data-box">
+                <div class="data-box-title">Área por Classe</div>
+                {% for classe, area in resultado_segmentacao.dados.area_por_classe.items() %}
+                    <p><strong>{{ classe }}</strong> : {{ area }}</p>
+                {% endfor %}
+            </div>
+        
+            <!-- Instâncias -->
+            <div class="data-box">
+                <div class="data-box-title">Instâncias</div>
+                {% for inst in resultado_segmentacao.dados.instancias %}
+                    <p>
+                        <strong>classe</strong>: {{ inst.classe }},
+                        <strong>confiança</strong>: {{ inst.confiança }},
+                        <strong>área</strong>: {{ inst.área_pixels }},
+                        <strong>bbox</strong>: {{ inst.bbox }}
+                    </p>
+                {% endfor %}
+            </div>
+        
+            <!-- Tempo de processamento -->
+            <div class="data-box">
+                <div class="data-box-title">Tempo de processamento</div>
+                <p>{{ resultado_segmentacao.tempo }} segundos</p>
+            </div>
+
+            <button type="submit" name="" >Baixar JSON dos dados</button>
+
+        </div>
+        
     {% else %}
 
     {% endif %}

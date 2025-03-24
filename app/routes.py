@@ -223,7 +223,7 @@ def instance_segmentation_page():
 @main.route('/panoptic_segmentation', methods=['GET', 'POST'])
 def panoptic_segmentation_page():
     filename = None
-    segmented_filenames = None
+    resultado_segmentacao = None
 
     if request.method == 'POST':
         if 'image' in request.files:
@@ -238,9 +238,11 @@ def panoptic_segmentation_page():
 
             if filename is not None:
                 # APLICANDO MÉTODO DE SEGMENTAÇÃO
-                segmented_filenames = apply_panoptic_segmentation(filename, confidence_threshold, device)
+                resultado_segmentacao = apply_panoptic_segmentation(filename, confidence_threshold, device)
 
-                if segmented_filenames:
+                if resultado_segmentacao:
                     ensure_folder_exists(current_app.config['PROCESSED_FOLDER'])  
 
-    return render_template('panoptic_segmentation.html', filename=filename, segmented_filenames=segmented_filenames)
+    return render_template('panoptic_segmentation.html',
+                            filename=filename,
+                            resultado_segmentacao=resultado_segmentacao)

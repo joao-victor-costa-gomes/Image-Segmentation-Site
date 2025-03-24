@@ -14,6 +14,8 @@ from detectron2 import model_zoo
 from detectron2.utils.visualizer import Visualizer, ColorMode
 from detectron2.structures import Instances
 
+# from .utils.extract_data import gerar_resumo_panoptico, gerar_resumo_segmentacao
+
 # from detectron2.projects import point_rend
 
 import os
@@ -33,6 +35,7 @@ def clone_instances(instances):
         new_instances.set(k, v.clone() if hasattr(v, 'clone') else v)
     return new_instances
 
+# PARA SEGMENTAÇÃO DE INSTÂNCIAS
 def gerar_resumo_segmentacao(instances, metadata, image_shape):
     """
     Gera resumo da segmentação de instâncias com contagem por classe, área, caixas e confiança.
@@ -83,6 +86,53 @@ def gerar_resumo_segmentacao(instances, metadata, image_shape):
         data_summary["area_por_classe"][cls] = f"{area} px ({perc}%)"
 
     return data_summary
+
+
+# PARA SEGMENTAÇÃO PANÓPTICA
+def gerar_resumo_panoptico(segmentation_info, metadata, panoptic_seg_map, image_shape):
+    """
+    Gera resumo da segmentação panóptica com contagem por classe, área e porcentagem.
+
+    Parâmetros:
+    - segmentation_info: lista de segmentos com chaves 'category_id' e 'isthing'.
+    - metadata: metadados do dataset (ex: MetadataCatalog).
+    - panoptic_seg_map: mapa de segmentos (H x W) com rótulos inteiros.
+    - image_shape: shape da imagem original.
+
+    Retorna:
+    - dicionário com resumo de classes, áreas e porcentagens.
+    """
+    data_summary = {
+        "classes_detectadas": defaultdict(int),
+        "area_por_classe": defaultdict(int),
+        "segmentos": []
+    }
+
+    class_names = metadata.get("thing_classes", []) + metadata.get("stuff_classes", [])
+    total_pixels = image_shape[0] * image_shape[1]
+
+    for segment in segmentation_info:
+        category_id = segment["category_id"]
+        class_name = class_names[category_id] if category_id < len(class_names) else str(category_id)
+
+        # Contar pixels com valor do segmento atual
+        mask = (panoptic_seg_map == segment["id"])
+        area = int(mask.sum())
+        data_summary["classes_detectadas"][class_name] += 1
+        data_summary["area_por_classe"][class_name] += area
+
+        data_summary["segmentos"].append({
+            "classe": class_name,
+            "área_pixels": area
+        })
+
+    # Calcular porcentagem de área
+    for cls, area in data_summary["area_por_classe"].items():
+        perc = round((area / total_pixels) * 100, 2)
+        data_summary["area_por_classe"][cls] = f"{area} px ({perc}%)"
+
+    return data_summary
+
 
 # ---------- CRIAÇÃO DO DETECTOR ----------
 
@@ -196,17 +246,19 @@ class Detector:
         # SEGMENTAÇÃO PANÓPTICA
         else:
             # Realiza a predição
-            predictions, segmentation_info = self.predictor(image)["panoptic_seg"]
+            panoptic_seg, segmentation_info = self.predictor(image)["panoptic_seg"]
             metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
             v = Visualizer(img_rgb=image[:, :, ::-1], metadata=metadata)
-            output = v.draw_panoptic_seg_predictions(predictions.to("cpu"), segmentation_info)
+            output = v.draw_panoptic_seg_predictions(panoptic_seg.to("cpu"), segmentation_info)
             segmented_image = output.get_image()[:, :, ::-1]
             filename_all = f"{self.filename}{base_name}"
             cv2.imwrite(os.path.join(processed_folder, filename_all), segmented_image)
             segmented_filenames[f"{self.segmentation_name}"] = filename_all
 
-        processing_time = round(time.time() - start_time, 3) # FINALIZAR CONTADOR
+            # Gera resumo panóptico
+            data_summary = gerar_resumo_panoptico(segmentation_info, metadata, panoptic_seg.to("cpu").numpy(), image.shape)
 
+        processing_time = round(time.time() - start_time, 3) # FINALIZAR CONTADOR
 
 
 
